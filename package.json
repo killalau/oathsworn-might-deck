@@ -2,6 +2,7 @@
   "name": "oathsworn-might-deck",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://killalau.github.io/oathsworn-might-deck/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
