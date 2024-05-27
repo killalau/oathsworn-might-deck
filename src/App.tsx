@@ -1,5 +1,7 @@
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { WhiteDice } from './data/Dice';
 
 function App() {
   return (
