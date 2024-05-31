@@ -30,6 +30,14 @@ export abstract class MightDice {
     return this.faces[rand];
   }
 
+  rollN(count: number): MightDiceFace[] {
+    const result: MightDiceFace[] = [];
+    for (let i = 0; i < count; i++) {
+      result.push(this.roll());
+    }
+    return result;
+  }
+
   clone(): MightDice {
     const dup: MightDice = this.constructor();
     dup.faces = [...this.faces];

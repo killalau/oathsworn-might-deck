@@ -24,19 +24,57 @@ export class MightDeck {
     return dup;
   }
 
-  sort(): MightDeck {
-    this.deck.sort(MightDiceFace.compare);
-    this.discard.sort(MightDiceFace.compare);
-    return this;
-  }
-
   shuffle(): MightDeck {
     this.deck.sort(() => (Math.random() >= 0.5 ? 1 : -1));
     return this;
   }
 
+  draw(): MightDiceFace {
+    const [result] = this.drawN();
+    return result;
+  }
+
+  drawN(times: number = 1): MightDiceFace[] {
+    if (this.deck.length === 0) {
+      this.deck = this.discard;
+      this.discard = [];
+    }
+
+    if (times <= this.deck.length) {
+      const result = this.deck.splice(0, times);
+      this.discard = this.discard.concat(result);
+      return result;
+    }
+
+    if (times <= this.size) {
+      const result = this.deck;
+      this.deck = this.discard;
+      this.discard = result;
+      this.shuffle();
+      return [...result, ...this.drawN(times - this.discard.length)];
+    }
+
+    // times > deck.length + discard.length
+    const reshuffleCount = Math.floor(times / this.size);
+    this.deck = this.deck.concat(this.discard);
+    this.discard = [];
+    let result: MightDiceFace[] = [];
+    for (let i = 0; i < reshuffleCount; i++) {
+      result = result.concat(result);
+    }
+    this.shuffle();
+    const remainder = times % this.size;
+    const remaining = this.deck.splice(0, remainder);
+    result = result.concat(remaining);
+    this.discard = remaining;
+    return result;
+  }
+
+  get size(): number {
+    return this.deck.length + this.discard.length;
+  }
+
   toString(): string {
-    const sorted = this.clone().sort();
     const summarize = (cards: MightDiceFace[]) =>
       Object.entries(
         cards.reduce(
@@ -52,8 +90,12 @@ export class MightDeck {
         .map(([dice, count]) => `${dice}x${count}`)
         .join(' ');
     return `Deck(${this.deck.length}):
-${summarize(sorted.deck)}
+${summarize(MightDeck.sort(this.deck))}
 Discard(${this.discard.length}):
-${summarize(sorted.discard)}`;
+${summarize(MightDeck.sort(this.discard))}`;
+  }
+
+  static sort(cards: MightDiceFace[]): MightDiceFace[] {
+    return [...cards].sort(MightDiceFace.compare);
   }
 }
