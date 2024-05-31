@@ -1,31 +1,26 @@
-import { MightDeck } from './MightDeck';
-import {
-  BlackDice,
-  MightDiceFace,
-  RedDice,
-  WhiteDice,
-  YellowDice,
-} from './MightDice';
+import MightCard from './MightCard';
+import MightDeck from './MightDeck';
+import { BlackDice, RedDice, WhiteDice, YellowDice } from './MightDice';
 
 describe('MightDeck', () => {
   describe('.sort()', () => {
     it('sort cards based on values and critical', () => {
       expect(
         MightDeck.sort([
-          new MightDiceFace(3),
-          new MightDiceFace(2),
-          new MightDiceFace(3, true),
-          new MightDiceFace(1),
-          new MightDiceFace(0),
-          new MightDiceFace(0),
+          new MightCard(3),
+          new MightCard(2),
+          new MightCard(3, true),
+          new MightCard(1),
+          new MightCard(0),
+          new MightCard(0),
         ]),
       ).toEqual([
-        new MightDiceFace(0),
-        new MightDiceFace(0),
-        new MightDiceFace(1),
-        new MightDiceFace(2),
-        new MightDiceFace(3),
-        new MightDiceFace(3, true),
+        new MightCard(0),
+        new MightCard(0),
+        new MightCard(1),
+        new MightCard(2),
+        new MightCard(3),
+        new MightCard(3, true),
       ]);
     });
   });
@@ -72,41 +67,38 @@ Discard(0):
   describe('.rollN', () => {
     it('draws from the top deck', () => {
       const deck = new MightDeck(new WhiteDice(), [
-        new MightDiceFace(0),
-        new MightDiceFace(1),
-        new MightDiceFace(2),
-        new MightDiceFace(3),
+        new MightCard(0),
+        new MightCard(1),
+        new MightCard(2),
+        new MightCard(3),
       ]);
       const result = deck.drawN(2);
       expect(result).toHaveLength(2);
-      expect(result).toEqual([new MightDiceFace(0), new MightDiceFace(1)]);
-      expect(deck.deck).toEqual([new MightDiceFace(2), new MightDiceFace(3)]);
-      expect(deck.discard).toEqual([
-        new MightDiceFace(0),
-        new MightDiceFace(1),
-      ]);
+      expect(result).toEqual([new MightCard(0), new MightCard(1)]);
+      expect(deck.deck).toEqual([new MightCard(2), new MightCard(3)]);
+      expect(deck.discard).toEqual([new MightCard(0), new MightCard(1)]);
     });
     describe('not enough card from deck', () => {
       it('also draws from discard pile', () => {
         const deck = new MightDeck(
           new WhiteDice(),
-          [new MightDiceFace(0), new MightDiceFace(1)],
-          [new MightDiceFace(2), new MightDiceFace(3)],
+          [new MightCard(0), new MightCard(1)],
+          [new MightCard(2), new MightCard(3)],
         );
         const result = deck.drawN(3);
         expect(deck.deck).toHaveLength(1);
         expect(deck.discard).toHaveLength(3);
         expect(MightDeck.sort([...deck.deck, ...deck.discard])).toEqual([
-          new MightDiceFace(0),
-          new MightDiceFace(1),
-          new MightDiceFace(2),
-          new MightDiceFace(3),
+          new MightCard(0),
+          new MightCard(1),
+          new MightCard(2),
+          new MightCard(3),
         ]);
         expect(result).toHaveLength(3);
         expect(result).toEqual(deck.discard);
         expect(result.slice(0, 2)).toEqual([
-          new MightDiceFace(0),
-          new MightDiceFace(1),
+          new MightCard(0),
+          new MightCard(1),
         ]);
         expect(result[2]).not.toEqual(deck.deck[0]);
       });

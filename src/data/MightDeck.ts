@@ -1,15 +1,12 @@
-import { MightDice, MightDiceFace } from './MightDice';
+import MightCard from './MightCard';
+import MightDice from './MightDice';
 
-export class MightDeck {
+export default class MightDeck {
   dice: MightDice;
-  deck: MightDiceFace[];
-  discard: MightDiceFace[];
+  deck: MightCard[];
+  discard: MightCard[];
 
-  constructor(
-    dice: MightDice,
-    deck?: MightDiceFace[],
-    discard?: MightDiceFace[],
-  ) {
+  constructor(dice: MightDice, deck?: MightCard[], discard?: MightCard[]) {
     this.dice = dice;
     this.deck = deck
       ? [...deck]
@@ -29,12 +26,12 @@ export class MightDeck {
     return this;
   }
 
-  draw(): MightDiceFace {
+  draw(): MightCard {
     const [result] = this.drawN();
     return result;
   }
 
-  drawN(times: number = 1): MightDiceFace[] {
+  drawN(times: number = 1): MightCard[] {
     if (this.deck.length === 0) {
       this.deck = this.discard;
       this.discard = [];
@@ -58,7 +55,7 @@ export class MightDeck {
     const reshuffleCount = Math.floor(times / this.size);
     this.deck = this.deck.concat(this.discard);
     this.discard = [];
-    let result: MightDiceFace[] = [];
+    let result: MightCard[] = [];
     for (let i = 0; i < reshuffleCount; i++) {
       result = result.concat(result);
     }
@@ -75,7 +72,7 @@ export class MightDeck {
   }
 
   toString(): string {
-    const summarize = (cards: MightDiceFace[]) =>
+    const summarize = (cards: MightCard[]) =>
       Object.entries(
         cards.reduce(
           (p, c) => {
@@ -95,7 +92,7 @@ Discard(${this.discard.length}):
 ${summarize(MightDeck.sort(this.discard))}`;
   }
 
-  static sort(cards: MightDiceFace[]): MightDiceFace[] {
-    return [...cards].sort(MightDiceFace.compare);
+  static sort(cards: MightCard[]): MightCard[] {
+    return [...cards].sort(MightCard.compare);
   }
 }
