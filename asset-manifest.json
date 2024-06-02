@@ -1,16 +1,19 @@
 {
   "files": {
-    "main.css": "/oathsworn-might-deck/static/css/main.f855e6bc.css",
-    "main.js": "/oathsworn-might-deck/static/js/main.f5cf98e6.js",
+    "main.css": "/oathsworn-might-deck/static/css/main.745d8894.css",
+    "main.js": "/oathsworn-might-deck/static/js/main.d2cb6d0b.js",
     "static/js/453.0cf12462.chunk.js": "/oathsworn-might-deck/static/js/453.0cf12462.chunk.js",
-    "static/media/logo.svg": "/oathsworn-might-deck/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "static/media/card_oathsworn_b.png": "/oathsworn-might-deck/static/media/card_oathsworn_b.d1d4bdce42f77c29d427.png",
+    "static/media/card_oathsworn_f.png": "/oathsworn-might-deck/static/media/card_oathsworn_f.5eead744f16f4bc93dee.png",
+    "static/media/card_encounter_b.png": "/oathsworn-might-deck/static/media/card_encounter_b.d18b4ecfbffe71539cda.png",
+    "static/media/card_encounter_f.png": "/oathsworn-might-deck/static/media/card_encounter_f.8a0bea94e0c80918924f.png",
     "index.html": "/oathsworn-might-deck/index.html",
-    "main.f855e6bc.css.map": "/oathsworn-might-deck/static/css/main.f855e6bc.css.map",
-    "main.f5cf98e6.js.map": "/oathsworn-might-deck/static/js/main.f5cf98e6.js.map",
+    "main.745d8894.css.map": "/oathsworn-might-deck/static/css/main.745d8894.css.map",
+    "main.d2cb6d0b.js.map": "/oathsworn-might-deck/static/js/main.d2cb6d0b.js.map",
     "453.0cf12462.chunk.js.map": "/oathsworn-might-deck/static/js/453.0cf12462.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f855e6bc.css",
-    "static/js/main.f5cf98e6.js"
+    "static/css/main.745d8894.css",
+    "static/js/main.d2cb6d0b.js"
   ]
 }
