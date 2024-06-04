@@ -1,24 +1,31 @@
 import { Card, Typography, colors } from '@mui/material';
 import { makeStyles } from '@mui/styles';
-import React, { FC, ReactNode } from 'react';
+import { clsx } from 'clsx';
+import { FC, ReactNode } from 'react';
 import { AspectRatio } from 'react-aspect-ratio';
 import EncounterBack from '../assets/card_encounter_b.png';
 import EncounterFront from '../assets/card_encounter_f.png';
 import OathswornBack from '../assets/card_oathsworn_b.png';
 import OathswornFront from '../assets/card_oathsworn_f.png';
-import { clsx } from 'clsx';
 import MightCard from '../data/MightCard';
 
 export type CMightCardProps = {
-  color: 'white' | 'yellow' | 'red' | 'black';
-  type: 'encounter' | 'oathsworn';
+  color?: 'white' | 'yellow' | 'red' | 'black';
+  type?: 'encounter' | 'oathsworn';
   front?: boolean;
   vertical?: boolean;
   value?: MightCard;
+  onClick?: () => void;
   children?: ReactNode;
 };
 
 const useStyles = makeStyles((theme) => ({
+  root: {},
+  selectable: {
+    '&:hover': {
+      cursor: 'pointer',
+    },
+  },
   white: { background: colors.grey[100], color: colors.common.black },
   yellow: { background: colors.yellow[700], color: colors.common.black },
   red: { background: colors.red[800], color: colors.common.white },
@@ -57,18 +64,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CMightCard: FC<CMightCardProps> = ({
-  color,
-  type,
+  color = 'white',
+  type = 'encounter',
   front,
   vertical,
   value,
+  onClick,
   children,
 }) => {
   const classes = useStyles();
   const ratio = vertical ? '25/36' : '36/25';
 
   return (
-    <Card>
+    <Card
+      className={clsx(classes.root, { [classes.selectable]: !!onClick })}
+      onClick={onClick}
+    >
       <AspectRatio
         className={clsx(
           classes.bg,
@@ -79,14 +90,14 @@ const CMightCard: FC<CMightCardProps> = ({
         ratio={ratio}
       >
         <div className={classes.wrapper}>
-          {front && value && value.value > 0 && (
+          {front && (
             <Typography
               variant="h4"
               className={clsx(classes.value, {
-                critical: value.critical,
+                critical: value?.critical,
               })}
             >
-              {value.critical ? value.toString() : value.value}
+              {value?.critical ? value?.toString() : value?.value ?? '0'}
             </Typography>
           )}
           {children}

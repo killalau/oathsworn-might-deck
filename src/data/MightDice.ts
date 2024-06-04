@@ -1,7 +1,10 @@
 import MightCard from './MightCard';
 
+export type MigthDiceColor = 'white' | 'yellow' | 'red' | 'black';
+
 export default abstract class MightDice {
   faces: MightCard[] = [];
+  color: MigthDiceColor = 'white';
 
   roll(): MightCard {
     const rand = Math.floor(Math.random() * this.faces.length);
@@ -24,6 +27,7 @@ export default abstract class MightDice {
 }
 
 export class WhiteDice extends MightDice {
+  color: MigthDiceColor = 'white';
   faces = [
     new MightCard(0),
     new MightCard(0),
@@ -35,6 +39,7 @@ export class WhiteDice extends MightDice {
 }
 
 export class YellowDice extends MightDice {
+  color: MigthDiceColor = 'yellow';
   faces = [
     new MightCard(0),
     new MightCard(0),
@@ -46,6 +51,7 @@ export class YellowDice extends MightDice {
 }
 
 export class RedDice extends MightDice {
+  color: MigthDiceColor = 'red';
   faces = [
     new MightCard(0),
     new MightCard(0),
@@ -57,6 +63,7 @@ export class RedDice extends MightDice {
 }
 
 export class BlackDice extends MightDice {
+  color: MigthDiceColor = 'black';
   faces = [
     new MightCard(0),
     new MightCard(0),

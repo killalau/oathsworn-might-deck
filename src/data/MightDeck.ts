@@ -15,7 +15,7 @@ export default class MightDeck {
   }
 
   clone(): MightDeck {
-    const dup = new MightDeck(this.dice);
+    const dup = new MightDeck(this.dice.clone());
     dup.deck = this.deck.map((d) => d.clone());
     dup.discard = this.discard.map((d) => d.clone());
     return dup;
