@@ -35,6 +35,7 @@ export default class MightDeck {
     if (this.deck.length === 0) {
       this.deck = this.discard;
       this.discard = [];
+      this.shuffle();
     }
 
     if (times <= this.deck.length) {
@@ -44,7 +45,7 @@ export default class MightDeck {
     }
 
     if (times <= this.size) {
-      const result = this.deck;
+      const result = [...this.deck];
       this.deck = this.discard;
       this.discard = result;
       this.shuffle();
@@ -53,7 +54,7 @@ export default class MightDeck {
 
     // times > deck.length + discard.length
     const reshuffleCount = Math.floor(times / this.size);
-    this.deck = this.deck.concat(this.discard);
+    this.deck = this.deck.concat(this.discard); // TODO: need review, we should draw the deck item first
     this.discard = [];
     let result: MightCard[] = [];
     for (let i = 0; i < reshuffleCount; i++) {

@@ -15,6 +15,7 @@ import MightDeckOrganizer, {
   MightCardsSelection,
   defaultMightCardsSelection,
 } from './data/MightDeckOrganizer';
+import MightCard from './data/MightCard';
 
 const theme = createTheme({
   palette: {
@@ -31,18 +32,41 @@ const theme = createTheme({
 });
 
 function App() {
-  const [isEncounter, setIsEncounter] = useState(false);
-  const [encounterDeck, setEncounterDeck] = useState(new MightDeckOrganizer());
-  const [oathswornDeck, setOathswornDeck] = useState(new MightDeckOrganizer());
+  const [isEncounter, setIsEncounter] = useState(true);
+  const [encounterDeck, setEncounterDeck] = useState(
+    new MightDeckOrganizer(true),
+  );
+  const [oathswornDeck, setOathswornDeck] = useState(
+    new MightDeckOrganizer(true),
+  );
   const [selections, setSelections] = useState<MightCardsSelection>({
     ...defaultMightCardsSelection,
   });
+  const [drewCards, setDrewCards] = useState<MightCard[]>([]);
 
   const toggleEncounter = () => {
     setIsEncounter((d) => !d);
   };
 
   const handleReset = () => {
+    setSelections({ ...defaultMightCardsSelection });
+  };
+
+  const handleDraw = () => {
+    const deck = isEncounter ? encounterDeck : oathswornDeck;
+    const updates = deck.clone();
+    const result = [
+      ...updates.white.drawN(selections.white),
+      ...updates.yellow.drawN(selections.yellow),
+      ...updates.red.drawN(selections.red),
+      ...updates.black.drawN(selections.black),
+    ];
+    if (isEncounter) {
+      setEncounterDeck(updates);
+    } else {
+      setOathswornDeck(updates);
+    }
+    setDrewCards(result);
     setSelections({ ...defaultMightCardsSelection });
   };
 
@@ -74,6 +98,9 @@ function App() {
               onSelect={(event) => setSelections(event)}
             />
           </Grid>
+          <Grid item xs={12}>
+            {drewCards.map((d) => d.toString())}
+          </Grid>
         </Grid>
 
         <AppBar
@@ -90,8 +117,19 @@ function App() {
             >
               Reset
             </Button>
-            <Button variant="outlined" color="primary" sx={{ flexGrow: 1 }}>
-              Confirm
+            <Button
+              variant="outlined"
+              color="primary"
+              sx={{ flexGrow: 1 }}
+              disabled={
+                !selections.white &&
+                !selections.yellow &&
+                !selections.red &&
+                !selections.black
+              }
+              onClick={handleDraw}
+            >
+              Draw
             </Button>
           </Toolbar>
         </AppBar>

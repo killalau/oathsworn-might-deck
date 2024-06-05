@@ -4,7 +4,7 @@ import MightDeckOrganizer, {
   MightCardsSelection,
   defaultMightCardsSelection,
 } from '../data/MightDeckOrganizer';
-import { MigthDiceColor } from '../data/MightDice';
+import { MigthColor } from '../data/MightCard';
 import CMigthDeck from './Deck';
 
 export type CMightDecksProps = {
@@ -20,7 +20,7 @@ const CMightDeckOrganizer: FC<CMightDecksProps> = ({
   selected = { ...defaultMightCardsSelection },
   onSelect,
 }) => {
-  const inc = (type: MigthDiceColor) => {
+  const inc = (type: MigthColor) => {
     onSelect?.({
       ...selected,
       [type]: selected[type] + 1,

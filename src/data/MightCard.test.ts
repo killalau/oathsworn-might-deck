@@ -1,6 +1,6 @@
 import MightCard from './MightCard';
 
-describe('MightDiceFace', () => {
+describe('MightCard', () => {
   describe('.compare()', () => {
     it("returns -1 when dice A's value is smaller", () => {
       const a = new MightCard(1);
