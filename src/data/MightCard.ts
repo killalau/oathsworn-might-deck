@@ -16,7 +16,7 @@ export default class MightCard {
   }
 
   clone(): MightCard {
-    return new MightCard(this.value, this.critical);
+    return new MightCard(this.value, this.critical, this.color);
   }
 
   toString(): string {

@@ -1,15 +1,39 @@
+import { CssBaseline, colors } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
+import { AppStateProvider } from './data/AppState';
+import './index.css';
+import './AspectRatio.css';
 import reportWebVitals from './reportWebVitals';
+
+const theme = createTheme({
+  palette: {
+    secondary: {
+      main: colors.grey[900],
+    },
+    warning: {
+      main: colors.yellow[700],
+    },
+    error: {
+      main: colors.red[800],
+    },
+  },
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') ?? document.body,
 );
+
 root.render(
   <React.StrictMode>
-    <App />
+    <CssBaseline />
+    <ThemeProvider theme={theme}>
+      <AppStateProvider>
+        <App />
+      </AppStateProvider>
+    </ThemeProvider>
   </React.StrictMode>,
 );
 

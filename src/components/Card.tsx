@@ -16,6 +16,7 @@ export type CMightCardProps = {
   vertical?: boolean;
   value?: MightCard;
   onClick?: () => void;
+  className?: string;
   children?: ReactNode;
 };
 
@@ -70,6 +71,7 @@ const CMightCard: FC<CMightCardProps> = ({
   vertical,
   value,
   onClick,
+  className,
   children,
 }) => {
   const classes = useStyles();
@@ -77,7 +79,11 @@ const CMightCard: FC<CMightCardProps> = ({
 
   return (
     <Card
-      className={clsx(classes.root, { [classes.selectable]: !!onClick })}
+      className={clsx(
+        classes.root,
+        { [classes.selectable]: !!onClick },
+        className,
+      )}
       onClick={onClick}
     >
       <AspectRatio
@@ -92,7 +98,6 @@ const CMightCard: FC<CMightCardProps> = ({
         <div className={classes.wrapper}>
           {front && (
             <Typography
-              variant="h4"
               className={clsx(classes.value, {
                 critical: value?.critical,
               })}

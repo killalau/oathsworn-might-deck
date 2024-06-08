@@ -1,139 +1,86 @@
-import {
-  AppBar,
-  Button,
-  CssBaseline,
-  Grid,
-  Toolbar,
-  colors,
-} from '@mui/material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { useState } from 'react';
-import './App.css';
-import './AspectRatio.css';
+import { AppBar, Button, Grid, Toolbar } from '@mui/material';
 import CMightDeckOrganizer from './components/Organizer';
-import MightDeckOrganizer, {
-  MightCardsSelection,
-  defaultMightCardsSelection,
-} from './data/MightDeckOrganizer';
-import MightCard from './data/MightCard';
+import { useAppState } from './data/AppState';
+import CResultsBoard from './components/ResultsBoard';
+import { makeStyles } from '@mui/styles';
 
-const theme = createTheme({
-  palette: {
-    secondary: {
-      main: colors.grey[900],
-    },
-    warning: {
-      main: colors.yellow[700],
-    },
-    error: {
-      main: colors.red[800],
-    },
+const useStyles = makeStyles((theme: any) => ({
+  root: {
+    paddingBottom: theme.spacing(6),
   },
-});
+}));
 
 function App() {
-  const [isEncounter, setIsEncounter] = useState(true);
-  const [encounterDeck, setEncounterDeck] = useState(
-    new MightDeckOrganizer(true),
-  );
-  const [oathswornDeck, setOathswornDeck] = useState(
-    new MightDeckOrganizer(true),
-  );
-  const [selections, setSelections] = useState<MightCardsSelection>({
-    ...defaultMightCardsSelection,
-  });
-  const [drewCards, setDrewCards] = useState<MightCard[]>([]);
-
-  const toggleEncounter = () => {
-    setIsEncounter((d) => !d);
-  };
-
-  const handleReset = () => {
-    setSelections({ ...defaultMightCardsSelection });
-  };
-
-  const handleDraw = () => {
-    const deck = isEncounter ? encounterDeck : oathswornDeck;
-    const updates = deck.clone();
-    const result = [
-      ...updates.white.drawN(selections.white),
-      ...updates.yellow.drawN(selections.yellow),
-      ...updates.red.drawN(selections.red),
-      ...updates.black.drawN(selections.black),
-    ];
-    if (isEncounter) {
-      setEncounterDeck(updates);
-    } else {
-      setOathswornDeck(updates);
-    }
-    setDrewCards(result);
-    setSelections({ ...defaultMightCardsSelection });
-  };
+  const app = useAppState();
+  const classes = useStyles();
+  const { isEncounter, encounterDeck, oathswornDeck, selections, drawResults } =
+    app.state;
 
   return (
-    <div className="App">
-      <CssBaseline />
-      <ThemeProvider theme={theme}>
-        <AppBar position="static" color="default">
-          <Toolbar variant="dense" disableGutters>
-            <div></div>
-            <Button
-              variant="text"
-              color={isEncounter ? 'error' : 'inherit'}
-              sx={{ flexGrow: 1, textAlign: 'center' }}
-              onClick={toggleEncounter}
-            >
-              {isEncounter ? 'Encounter Deck' : 'Oathsworn Might Deck'}
-            </Button>
-            <div></div>
-          </Toolbar>
-        </AppBar>
+    <div className={classes.root}>
+      <AppBar position="static" color="default">
+        <Toolbar variant="dense" disableGutters>
+          <div></div>
+          <Button
+            variant="text"
+            color={isEncounter ? 'error' : 'inherit'}
+            sx={{ flexGrow: 1, textAlign: 'center' }}
+            onClick={app.actions.toggleDeck}
+          >
+            {isEncounter ? 'Encounter Deck' : 'Oathsworn Might Deck'}
+          </Button>
+          <div></div>
+        </Toolbar>
+      </AppBar>
 
-        <Grid container padding={2}>
-          <Grid item xs={12}>
-            <CMightDeckOrganizer
-              type={isEncounter ? 'encounter' : 'oathsworn'}
-              value={isEncounter ? encounterDeck : oathswornDeck}
-              selected={selections}
-              onSelect={(event) => setSelections(event)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            {drewCards.map((d) => d.toString())}
-          </Grid>
+      <Grid container padding={2} spacing={2}>
+        <Grid item xs={12} sm={4}>
+          <CMightDeckOrganizer
+            type={isEncounter ? 'encounter' : 'oathsworn'}
+            value={isEncounter ? encounterDeck : oathswornDeck}
+            selected={selections}
+            onSelect={app.actions.setSelections}
+          />
         </Grid>
+        <Grid item xs={12} sm={8}>
+          <CResultsBoard values={drawResults} />
+        </Grid>
+      </Grid>
 
-        <AppBar
-          position="fixed"
-          sx={{ top: 'auto', bottom: 0 }}
-          color="default"
-        >
-          <Toolbar variant="dense" sx={{ gap: 2 }}>
-            <Button
-              variant="outlined"
-              color="inherit"
-              sx={{ flexGrow: 1 }}
-              onClick={handleReset}
-            >
-              Reset
-            </Button>
-            <Button
-              variant="outlined"
-              color="primary"
-              sx={{ flexGrow: 1 }}
-              disabled={
-                !selections.white &&
-                !selections.yellow &&
-                !selections.red &&
-                !selections.black
-              }
-              onClick={handleDraw}
-            >
-              Draw
-            </Button>
-          </Toolbar>
-        </AppBar>
-      </ThemeProvider>
+      <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }} color="default">
+        <Toolbar variant="dense" sx={{ gap: 2 }}>
+          <Button
+            variant="outlined"
+            color="inherit"
+            sx={{ flexGrow: 1 }}
+            onClick={app.actions.resetSelections}
+          >
+            Reset
+          </Button>
+          <Button
+            variant="outlined"
+            color="error"
+            sx={{ flexGrow: 1 }}
+            onClick={app.actions.discardDrawResults}
+          >
+            Discard
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            sx={{ flexGrow: 1 }}
+            disabled={
+              !selections.white &&
+              !selections.yellow &&
+              !selections.red &&
+              !selections.black
+            }
+            onClick={app.actions.confirmDraw}
+          >
+            Draw
+          </Button>
+        </Toolbar>
+      </AppBar>
     </div>
   );
 }
