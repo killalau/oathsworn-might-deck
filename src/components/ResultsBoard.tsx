@@ -1,4 +1,4 @@
-import { Chip, Grid, Typography } from '@mui/material';
+import { Chip, Grid, Typography, colors } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { FC } from 'react';
 import { useAppState } from '../data/AppState';
@@ -11,6 +11,12 @@ export type CResultsBoardProps = {
 
 const useStyles = makeStyles((theme) => ({
   root: {},
+  results: {
+    background: colors.grey[200],
+    padding: 8,
+    borderRadius: 8,
+    minHeight: '50vh',
+  },
 }));
 
 const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
@@ -19,35 +25,39 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
   const damage = values.reduce((p, c) => p + c.value, 0);
   const criticalHits = values.filter((v) => v.critical).length;
   const blanks = values.filter((v) => !v.value).length;
-  const missed = app.state.isEncounter && blanks >= 2;
+  const missed = !app.state.isEncounter && blanks >= 2;
 
   return (
     <Grid container spacing={1}>
       <Grid item xs={12} container>
-        <Grid item xs={3}>
+        <Grid item xs={6} sm={3}>
           <Typography>Damage: {damage}</Typography>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={6} sm={3}>
           <Typography>Critical Hits: {criticalHits}</Typography>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={6} sm={3}>
           <Typography>Blanks: {blanks}</Typography>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={6} sm={3}>
           {missed && <Chip color="error" label="Missed" size="small" />}
         </Grid>
       </Grid>
-      {values.map((v, i) => (
-        <Grid item xs={3} sm={3}>
-          <CMightCard
-            key={i}
-            color={v.color}
-            front
-            type={app.state.isEncounter ? 'encounter' : 'oathsworn'}
-            value={v}
-          />
+      <Grid item xs={12} className={classes.results}>
+        <Grid container spacing={1}>
+          {values.map((v, i) => (
+            <Grid item xs={6} sm={3}>
+              <CMightCard
+                key={i}
+                color={v.color}
+                front
+                type={app.state.isEncounter ? 'encounter' : 'oathsworn'}
+                value={v}
+              />
+            </Grid>
+          ))}
         </Grid>
-      ))}
+      </Grid>
     </Grid>
   );
 };

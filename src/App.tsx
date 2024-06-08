@@ -4,10 +4,15 @@ import { useAppState } from './data/AppState';
 import CResultsBoard from './components/ResultsBoard';
 import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    paddingBottom: theme.spacing(6),
+    minHeight: '100vh',
+    paddingTop: 48,
+    paddingBottom: 48,
   },
+  main: {},
+  organizer: {},
+  results: {},
 }));
 
 function App() {
@@ -18,7 +23,7 @@ function App() {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" color="default">
+      <AppBar color="default">
         <Toolbar variant="dense" disableGutters>
           <div></div>
           <Button
@@ -33,7 +38,7 @@ function App() {
         </Toolbar>
       </AppBar>
 
-      <Grid container padding={2} spacing={2}>
+      <Grid container padding={2} spacing={2} className={classes.main}>
         <Grid item xs={12} sm={4}>
           <CMightDeckOrganizer
             type={isEncounter ? 'encounter' : 'oathsworn'}

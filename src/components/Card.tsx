@@ -102,7 +102,7 @@ const CMightCard: FC<CMightCardProps> = ({
                 critical: value?.critical,
               })}
             >
-              {value?.critical ? value?.toString() : value?.value ?? '0'}
+              {value?.critical ? value?.toString() : value?.value || ' '}
             </Typography>
           )}
           {children}
