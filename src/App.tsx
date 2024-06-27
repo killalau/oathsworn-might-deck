@@ -66,6 +66,7 @@ function App() {
             variant="outlined"
             color="error"
             sx={{ flexGrow: 1 }}
+            disabled={app.state.drawResults.length === 0}
             onClick={app.actions.discardDrawResults}
           >
             Discard
