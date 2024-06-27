@@ -46,9 +46,8 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
       <Grid item xs={12} className={classes.results}>
         <Grid container spacing={1}>
           {values.map((v, i) => (
-            <Grid item xs={6} sm={3}>
+            <Grid item xs={6} sm={3} key={i}>
               <CMightCard
-                key={i}
                 color={v.color}
                 front
                 type={app.state.isEncounter ? 'encounter' : 'oathsworn'}
