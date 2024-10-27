@@ -86,7 +86,7 @@ export const AppStateProvider: FC<{ children: ReactNode }> = ({ children }) => {
         console.log('draw results', drawResults);
         return {
           ...prev,
-          [prev.isEncounter ? 'encounterDeck' : 'oathswronDeck']: updates,
+          [prev.isEncounter ? 'encounterDeck' : 'oathswornDeck']: updates,
           drawResults: [...prev.drawResults, ...drawResults],
           selections: { ...defaultMightCardsSelection },
         };
