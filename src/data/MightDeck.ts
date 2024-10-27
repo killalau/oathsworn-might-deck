@@ -72,6 +72,18 @@ export default class MightDeck {
     return this.deck.length + this.discard.length;
   }
 
+  get blanks(): number {
+    return this.deck.filter(i => [0].includes(i.value)).length;
+  }
+
+  get crits(): number {
+    return this.deck.filter(i => [true].includes(i.critical)).length;
+  }
+
+  get ev(): number {
+    return this.deck.reduce((sum, current) => sum + current.value, 0)/this.deck.length;
+  }
+
   toString(): string {
     const summarize = (cards: MightCard[]) =>
       Object.entries(
