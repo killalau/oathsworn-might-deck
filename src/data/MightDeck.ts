@@ -73,11 +73,11 @@ export default class MightDeck {
   }
 
   get blanks(): number {
-    return this.deck.filter(i => [0].includes(i.value)).length;
+    return this.deck.filter((v) => !v.value).length;
   }
 
   get crits(): number {
-    return this.deck.filter(i => [true].includes(i.critical)).length;
+    return this.deck.filter((v) => v.critical).length;
   }
 
   get ev(): number {
