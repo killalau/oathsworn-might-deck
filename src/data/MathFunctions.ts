@@ -15,11 +15,11 @@ export default function hitChance(deckSize: number, blanksInDeck: number, drawSi
   if(drawSize >= deckSize-blanksInDeck+2)
     return result
   
-  result += blanksInDeck*drawSize*factorial(deckSize - blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize+1)*factorial(deckSize-drawSize)/factorial(deckSize);
+  result += drawOneBlank(deckSize, blanksInDeck, drawSize);
   
   // Add the probability of drawing zero blanks
   if(drawSize <= deckSize-blanksInDeck+1)
-    result += factorial(deckSize-blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize)*factorial(deckSize-drawSize)/factorial(deckSize);
+    result += drawZeroBlank(deckSize, blanksInDeck, drawSize);
 
   return result;
 }
