@@ -6,7 +6,7 @@ import MightCard from '../data/MightCard';
 import CMightCard from './Card';
 
 export type CResultsBoardProps = {
-  values: MightCard[];
+  values: MightCard[][];
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -22,9 +22,9 @@ const useStyles = makeStyles((theme) => ({
 const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
   const app = useAppState();
   const classes = useStyles();
-  const damage = values.reduce((p, c) => p + c.value, 0);
-  const criticalHits = values.filter((v) => v.critical).length;
-  const blanks = values.filter((v) => !v.value).length;
+  const damage = values.flat().reduce((p, c) => p + c.value, 0);
+  const criticalHits = values.flat().filter((v) => v.critical).length;
+  const blanks = values.flat().filter((v) => !v.value).length;
   const missed = !app.state.isEncounter && blanks >= 2;
 
   return (
@@ -45,16 +45,19 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
       </Grid>
       <Grid item xs={12} className={classes.results}>
         <Grid container spacing={1}>
-          {values.map((v, i) => (
-            <Grid item xs={6} sm={3} key={i}>
-              <CMightCard
-                color={v.color}
-                front
-                type={app.state.isEncounter ? 'encounter' : 'oathsworn'}
-                value={v}
-              />
-            </Grid>
-          ))}
+          {values.map((row, i) =>
+            row.map((v, j) => (
+              <Grid item xs={6} sm={3} key={`${i}-${j}`}>
+                <CMightCard
+                  color={v.color}
+                  new={i === 0}
+                  front
+                  type={app.state.isEncounter ? 'encounter' : 'oathsworn'}
+                  value={v}
+                />
+              </Grid>
+            ))
+          )}
         </Grid>
       </Grid>
     </Grid>

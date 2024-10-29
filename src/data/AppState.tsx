@@ -16,7 +16,7 @@ interface AppState {
   encounterDeck: MightDeckOrganizer;
   oathswornDeck: MightDeckOrganizer;
   selections: MightCardsSelection;
-  drawResults: MightCard[];
+  drawResults: MightCard[][];
 }
 
 interface AppActions {
@@ -25,6 +25,7 @@ interface AppActions {
   setSelections: (selections: MightCardsSelection) => void;
   confirmDraw: () => void;
   discardDrawResults: () => void;
+  confirmDrawCriticals: () => void;
 }
 
 interface AppStateContextProps {
@@ -87,9 +88,24 @@ export const AppStateProvider: FC<{ children: ReactNode }> = ({ children }) => {
         return {
           ...prev,
           [prev.isEncounter ? 'encounterDeck' : 'oathswornDeck']: updates,
-          drawResults: [...prev.drawResults, ...drawResults],
+          drawResults: [drawResults, ...prev.drawResults],
           selections: { ...defaultMightCardsSelection },
         };
+      }),
+
+    confirmDrawCriticals: () =>
+      setState((prev) => {
+        console.log('confirmDrawCriticals', prev);
+        const newCriticals = prev.drawResults[0].filter((v) => v.critical);
+        const selections = newCriticals.reduce((acc, card) => ({
+          ...acc,
+          [card.color]: acc[card.color] + 1
+        }), { ...defaultMightCardsSelection });
+
+        return {
+          ...prev,
+          selections,
+        }
       }),
 
     discardDrawResults: () =>

@@ -1,4 +1,4 @@
-import { Card, Typography, colors } from '@mui/material';
+import { Card, Chip, Typography, colors } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { clsx } from 'clsx';
 import { FC, ReactNode } from 'react';
@@ -15,13 +15,17 @@ export type CMightCardProps = {
   front?: boolean;
   vertical?: boolean;
   value?: MightCard;
+  new?: boolean;
   onClick?: () => void;
   className?: string;
   children?: ReactNode;
 };
 
 const useStyles = makeStyles((theme) => ({
-  root: {},
+  root: {
+    position: 'relative',
+    overflow: 'visible !important',
+  },
   selectable: {
     '&:hover': {
       cursor: 'pointer',
@@ -55,12 +59,19 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  critical: {},
   value: {
     paddingTop: '1vw',
     paddingLeft: '0.2vw',
     '&$critical': {
       fontSize: 'larger',
     },
+  },
+  tag: {
+    position: 'absolute',
+    top: '-0.25rem',
+    left: '-0.25rem',
+    zIndex: 100,
   },
 }));
 
@@ -70,6 +81,7 @@ const CMightCard: FC<CMightCardProps> = ({
   front,
   vertical,
   value,
+  new: isNew,
   onClick,
   className,
   children,
@@ -86,6 +98,7 @@ const CMightCard: FC<CMightCardProps> = ({
       )}
       onClick={onClick}
     >
+      {isNew && <Chip label="New" size="small" color="warning" className={classes.tag} />}
       <AspectRatio
         className={clsx(
           classes.bg,

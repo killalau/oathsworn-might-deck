@@ -20,6 +20,9 @@ function App() {
   const classes = useStyles();
   const { isEncounter, encounterDeck, oathswornDeck, selections, drawResults } =
     app.state;
+  const newCriticalHits = (drawResults[0] ?? []).filter((v) => v.critical).length;
+  const hasSelections = selections.white > 0 || selections.yellow > 0 || selections.red > 0 || selections.black > 0;
+  const showDrawCritical = !hasSelections && newCriticalHits > 0;
 
   return (
     <div className={classes.root}>
@@ -62,28 +65,33 @@ function App() {
           >
             Reset
           </Button>
+          {
+            showDrawCritical ?
+              <Button
+                variant="outlined"
+                color="primary"
+                sx={{ flexGrow: 1 }}
+                onClick={app.actions.confirmDrawCriticals}
+              >
+                Draw Critical{newCriticalHits > 1 ? 's' : ''} ({newCriticalHits})
+              </Button> : <Button
+                variant="outlined"
+                color="primary"
+                sx={{ flexGrow: 1 }}
+                disabled={!hasSelections}
+                onClick={app.actions.confirmDraw}
+              >
+                Draw
+              </Button>
+          }
           <Button
             variant="outlined"
             color="error"
             sx={{ flexGrow: 1 }}
-            disabled={app.state.drawResults.length === 0}
+            disabled={app.state.drawResults.length === 0 || hasSelections}
             onClick={app.actions.discardDrawResults}
           >
-            Discard
-          </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            sx={{ flexGrow: 1 }}
-            disabled={
-              !selections.white &&
-              !selections.yellow &&
-              !selections.red &&
-              !selections.black
-            }
-            onClick={app.actions.confirmDraw}
-          >
-            Draw
+            Confirm & Discard
           </Button>
         </Toolbar>
       </AppBar>
