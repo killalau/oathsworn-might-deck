@@ -4,7 +4,6 @@ import { FC } from 'react';
 import { useAppState } from '../data/AppState';
 import MightCard from '../data/MightCard';
 import CMightCard from './Card';
-import { hitChance } from '../data/MathFunctions';
 
 export type CResultsBoardProps = {
   values: MightCard[];
@@ -27,9 +26,34 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
   const criticalHits = values.filter((v) => v.critical).length;
   const blanks = values.filter((v) => !v.value).length;
   const missed = !app.state.isEncounter && blanks >= 2;
-  const evOS = (app.state.oathswornDeck.black.ev*app.state.selections.black+app.state.oathswornDeck.red.ev*app.state.selections.red+app.state.oathswornDeck.yellow.ev*app.state.selections.yellow+app.state.oathswornDeck.white.ev*app.state.selections.white);
-  const evE = (app.state.encounterDeck.black.ev*app.state.selections.black+app.state.encounterDeck.red.ev*app.state.selections.red+app.state.encounterDeck.yellow.ev*app.state.selections.yellow+app.state.encounterDeck.white.ev*app.state.selections.white);
-  const hitChanceWhite = hitChance(app.state.oathswornDeck.white.deck.length, app.state.oathswornDeck.white.blanks, app.state.selections.white);
+
+  const colors = ["black", "red", "yellow", "white"] as const;
+
+  const evOS = colors.reduce(
+    (sum, color) => sum + app.state.oathswornDeck[color].ev * app.state.selections[color],
+    0
+  );
+  const evE = colors.reduce(
+    (sum, color) => sum + app.state.encounterDeck[color].ev * app.state.selections[color],
+    0
+  );
+  let hitChance = colors.reduce(
+    (prob, color) => prob*app.state.oathswornDeck[color].probZeroBlank(app.state.selections[color]),
+    1
+  )
+
+  const hitChanceOneBlank = colors.map((excludedColor) =>
+    colors
+      .filter((color) => color !== excludedColor)
+      .reduce(
+        (prob, color) =>
+          prob * app.state.oathswornDeck[color].probZeroBlank(app.state.selections[color]),
+        1
+      )*app.state.oathswornDeck[excludedColor].probOneBlank(app.state.selections[excludedColor])
+  );
+
+  hitChance += hitChanceOneBlank.reduce((sum, value) => sum + value, 0);
+ 
 
   return (
     <Grid container spacing={1}>
@@ -38,10 +62,10 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
           <Typography>Expected Value: {app.state.isEncounter ? evE.toFixed(1) : evOS.toFixed(1)}</Typography>
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Typography>Hit Chance: {app.state.isEncounter ? 100 : (hitChanceWhite*100).toFixed(0)}%</Typography>
+          <Typography>Hit Chance: {app.state.isEncounter ? 100 : (hitChance*100).toFixed(0)}%</Typography>
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Typography>Corrected EV: {app.state.isEncounter ? evE.toFixed(1) : (evOS*hitChanceWhite).toFixed(1)}</Typography>
+          <Typography>Corrected EV: {app.state.isEncounter ? evE.toFixed(1) : (evOS*hitChance).toFixed(1)}</Typography>
         </Grid>
         <Grid item xs={6} sm={3}>
         </Grid>

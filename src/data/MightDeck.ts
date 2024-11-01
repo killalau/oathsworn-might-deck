@@ -105,7 +105,7 @@ export default class MightDeck {
       return result;
   
     result += factorial(deckSize-blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize)*factorial(deckSize-drawSize)/factorial(deckSize);
-  
+
     return result;
   }
 
@@ -118,8 +118,8 @@ export default class MightDeck {
     if(drawSize > deckSize-blanksInDeck+1)
       return result;
   
-    result += blanksInDeck*drawSize*this.probZeroBlank(drawSize);
-  
+    result += blanksInDeck*drawSize*factorial(deckSize - blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize+1)*factorial(deckSize-drawSize)/factorial(deckSize);
+
     return result;
   }
 
