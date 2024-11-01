@@ -5,19 +5,22 @@ import { factorial } from './MathFunctions';
 export default class MightDeck {
   dice: MightDice;
   deck: MightCard[];
+  display: MightCard[];
   discard: MightCard[];
 
-  constructor(dice: MightDice, deck?: MightCard[], discard?: MightCard[]) {
+  constructor(dice: MightDice, deck?: MightCard[], display?: MightCard[], discard?: MightCard[]) {
     this.dice = dice;
     this.deck = deck
       ? [...deck]
       : [...dice.faces, ...dice.faces, ...dice.faces];
+    this.display = display ? [...display] : [];
     this.discard = discard ? [...discard] : [];
   }
 
   clone(): MightDeck {
     const dup = new MightDeck(this.dice.clone());
     dup.deck = this.deck.map((d) => d.clone());
+    dup.display = this.display.map((d) => d.clone());
     dup.discard = this.discard.map((d) => d.clone());
     return dup;
   }
@@ -41,16 +44,16 @@ export default class MightDeck {
 
     if (times <= this.deck.length) {
       const result = this.deck.splice(0, times);
-      this.discard = this.discard.concat(result);
+      this.display = this.display.concat(result);
       return result;
     }
 
     if (times <= this.size) {
       const result = [...this.deck];
       this.deck = this.discard;
-      this.discard = result;
+      this.display = result;
       this.shuffle();
-      return [...result, ...this.drawN(times - this.discard.length)];
+      return [...result, ...this.drawN(times - this.display.length)];
     }
 
     // times > deck.length + discard.length
@@ -67,6 +70,11 @@ export default class MightDeck {
     result = result.concat(remaining);
     this.discard = remaining;
     return result;
+  }
+
+  discardDisplay() {
+    this.discard = [ ...this.discard, ...this.display];
+    this.display = [];
   }
 
   get size(): number {
