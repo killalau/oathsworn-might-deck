@@ -1,5 +1,6 @@
 import MightCard from './MightCard';
 import MightDice from './MightDice';
+import { factorial } from './MathFunctions';
 
 export default class MightDeck {
   dice: MightDice;
@@ -85,6 +86,33 @@ export default class MightDeck {
 			return this.discard.reduce((sum, current) => sum + current.value, 0)/this.discard.length;
 		}
     return this.deck.reduce((sum, current) => sum + current.value, 0)/this.deck.length;
+  }
+
+  probZeroBlank(drawSize: number): number {
+    const deckSize = this.deck.length;
+    const blanksInDeck = this.blanks;
+    let result = 0;
+
+    if(drawSize > this.deck.length-this.blanks)
+      return result;
+  
+    result += factorial(deckSize-blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize)*factorial(deckSize-drawSize)/factorial(deckSize);
+  
+    return result;
+  }
+
+  probOneBlank(drawSize: number): number {
+    const deckSize = this.deck.length;
+    const blanksInDeck = this.blanks;
+    
+    let result = 0;
+
+    if(drawSize > deckSize-blanksInDeck+1)
+      return result;
+  
+    result += blanksInDeck*drawSize*this.probZeroBlank(drawSize);
+  
+    return result;
   }
 
   toString(): string {

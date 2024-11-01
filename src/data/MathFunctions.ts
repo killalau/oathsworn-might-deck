@@ -1,4 +1,4 @@
-function factorial(n: number) { 
+export function factorial(n: number) { 
   let ans = 1; 
   
   if(n === 0)
@@ -8,7 +8,7 @@ function factorial(n: number) {
   return ans; 
 }
 
-export default function hitChance(deckSize: number, blanksInDeck: number, drawSize: number) : number{
+export function hitChance(deckSize: number, blanksInDeck: number, drawSize: number) : number{
   let result = 0;
 
   // Calculate the probability of drawing exactly one blank
@@ -27,7 +27,7 @@ export default function hitChance(deckSize: number, blanksInDeck: number, drawSi
 function drawZeroBlank(deckSize: number, blanksInDeck: number, drawSize: number) : number{
   let result = 0;
 
-  if(drawSize > deckSize-blanksInDeck+1)
+  if(drawSize > deckSize-blanksInDeck)
     return result;
 
   result += factorial(deckSize-blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize)*factorial(deckSize-drawSize)/factorial(deckSize);
@@ -39,7 +39,7 @@ function drawZeroBlank(deckSize: number, blanksInDeck: number, drawSize: number)
 function drawOneBlank(deckSize: number, blanksInDeck: number, drawSize: number) : number{
   let result = 0;
 
-  if(drawSize >= deckSize-blanksInDeck+2)
+  if(drawSize > deckSize-blanksInDeck+1)
     return result;
 
   result += blanksInDeck*drawSize*factorial(deckSize - blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize+1)*factorial(deckSize-drawSize)/factorial(deckSize);

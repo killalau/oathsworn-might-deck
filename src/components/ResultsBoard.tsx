@@ -4,7 +4,7 @@ import { FC } from 'react';
 import { useAppState } from '../data/AppState';
 import MightCard from '../data/MightCard';
 import CMightCard from './Card';
-import hitChance from '../data/MathFunctions';
+import { hitChance } from '../data/MathFunctions';
 
 export type CResultsBoardProps = {
   values: MightCard[];
