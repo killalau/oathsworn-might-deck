@@ -81,6 +81,9 @@ export default class MightDeck {
   }
 
   get ev(): number {
+		if (this.deck.length === 0) {
+			return this.discard.reduce((sum, current) => sum + current.value, 0)/this.discard.length;
+		}
     return this.deck.reduce((sum, current) => sum + current.value, 0)/this.deck.length;
   }
 
