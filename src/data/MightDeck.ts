@@ -99,11 +99,15 @@ export default class MightDeck {
   probZeroBlank(drawSize: number): number {
     const deckSize = this.deck.length;
     const blanksInDeck = this.blanks;
+
+    if (drawSize === 0)
+      return 1;
+
+    if(drawSize > this.deck.length-blanksInDeck)
+      return 0;
+
     let result = 0;
 
-    if(drawSize > this.deck.length-this.blanks)
-      return result;
-  
     result += factorial(deckSize-blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize)*factorial(deckSize-drawSize)/factorial(deckSize);
 
     return result;
@@ -113,9 +117,12 @@ export default class MightDeck {
     const deckSize = this.deck.length;
     const blanksInDeck = this.blanks;
     
+    if (drawSize === 0)
+      return 0;
+    
     let result = 0;
 
-    if(drawSize > deckSize-blanksInDeck+1)
+    if(drawSize > this.deck.length-blanksInDeck+1)
       return result;
   
     result += blanksInDeck*drawSize*factorial(deckSize - blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize+1)*factorial(deckSize-drawSize)/factorial(deckSize);
