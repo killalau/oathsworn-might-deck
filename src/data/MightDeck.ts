@@ -51,6 +51,7 @@ export default class MightDeck {
     if (times <= this.size) {
       const result = [...this.deck];
       this.deck = this.discard;
+      this.discard = [];
       this.display = result;
       this.shuffle();
       return [...result, ...this.drawN(times - this.display.length)];
@@ -73,8 +74,10 @@ export default class MightDeck {
   }
 
   discardDisplay() {
+    console.log('Discard & Display', this.discard, this.display)
     this.discard = [ ...this.discard, ...this.display];
     this.display = [];
+    console.log('Discard & Display', this.discard, this.display)
   }
 
   get size(): number {
@@ -118,7 +121,6 @@ export default class MightDeck {
       this.deck = this.discard;
       this.discard = [];
       const rollOVerProb = this.probZeroBlank(drawSize-deckSize);
-      console.log('Draw Deck prob Zero:', rollOVerProb)
 
       this.deck = deckStore;
       this.discard =  discardStore;
@@ -167,7 +169,6 @@ export default class MightDeck {
       } else {
         rollOVerProb = this.probOneBlank(drawSize-deckSize);
       }
-      console.log('Draw Deck prob Zero:', rollOVerProb)
 
       this.deck = deckStore;
       this.discard =  discardStore;
