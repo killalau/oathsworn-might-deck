@@ -103,12 +103,35 @@ export default class MightDeck {
     if (drawSize === 0)
       return 1;
 
-    if(drawSize > this.deck.length-blanksInDeck)
+    if(drawSize === deckSize && blanksInDeck === 0)
+      return 1;
+
+    if(drawSize >= deckSize && blanksInDeck !== 0)
       return 0;
 
-    let result = 0;
+    if (drawSize > deckSize) {
+      // reaching this point, there is zero blank in the deck
+      
+      const deckStore = this.deck;
+      const discardStore = this.discard;
 
-    result += factorial(deckSize-blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize)*factorial(deckSize-drawSize)/factorial(deckSize);
+      this.deck = this.discard;
+      this.discard = [];
+      const rollOVerProb = this.probZeroBlank(drawSize-deckSize);
+      console.log('Draw Deck prob Zero:', rollOVerProb)
+
+      this.deck = deckStore;
+      this.discard =  discardStore;
+
+      return rollOVerProb;
+    }
+
+    if(drawSize > deckSize-blanksInDeck)
+      return 0;
+
+    // drawsize < decksize-blanksInDeck
+
+    const result = factorial(deckSize-blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize)*factorial(deckSize-drawSize)/factorial(deckSize);
 
     return result;
   }
@@ -119,13 +142,43 @@ export default class MightDeck {
     
     if (drawSize === 0)
       return 0;
-    
-    let result = 0;
 
+    if(drawSize === deckSize && blanksInDeck !== 1)
+      return 0;
+
+    if(drawSize === deckSize && blanksInDeck === 1)
+      return 1;
+
+    if(drawSize >= deckSize && blanksInDeck > 1)
+      return 0;
+
+    if (drawSize > deckSize) {
+      // reaching this point, there is 0 or 1 blank in the deck
+
+      const deckStore = this.deck;
+      const discardStore = this.discard;
+
+      this.deck = this.discard;
+      this.discard = [];
+
+      let rollOVerProb = 0;
+      if (blanksInDeck) {
+        rollOVerProb = this.probZeroBlank(drawSize-deckSize);
+      } else {
+        rollOVerProb = this.probOneBlank(drawSize-deckSize);
+      }
+      console.log('Draw Deck prob Zero:', rollOVerProb)
+
+      this.deck = deckStore;
+      this.discard =  discardStore;
+
+      return rollOVerProb;
+    }
+    
     if(drawSize > this.deck.length-blanksInDeck+1)
-      return result;
+      return 0;
   
-    result += blanksInDeck*drawSize*factorial(deckSize - blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize+1)*factorial(deckSize-drawSize)/factorial(deckSize);
+    const result = blanksInDeck*drawSize*factorial(deckSize - blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize+1)*factorial(deckSize-drawSize)/factorial(deckSize);
 
     return result;
   }
