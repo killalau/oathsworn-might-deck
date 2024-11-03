@@ -33,19 +33,31 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
 
   if (app.state.isEncounter) {
 
-    ev = colors.reduce(
-      (sum, color) => sum + app.state.encounterDeck[color].deckAverage * app.state.selections[color],
-      0
-    );
+    ev = colors.reduce((sum, color) => {
+      const { deckAverage, discardAverage } = app.state.encounterDeck[color];
+      const deckSize = app.state.encounterDeck[color].deck.length;
+      const selectedCount = app.state.selections[color];
+    
+      const deckContribution = Math.min(selectedCount, deckSize) * deckAverage;
+      const discardContribution = Math.max(selectedCount - deckSize, 0) * discardAverage;
+
+      return sum + deckContribution + discardContribution;
+    }, 0);
 
     hitChance = 1;
 
   } else {
 
-    ev = colors.reduce(
-      (sum, color) => sum + app.state.oathswornDeck[color].deckEV * app.state.selections[color],
-      0
-    );
+    ev = colors.reduce((sum, color) => {
+      const { deckEV, discardEV } = app.state.oathswornDeck[color];
+      const deckSize = app.state.oathswornDeck[color].deck.length;
+      const selectedCount = app.state.selections[color];
+    
+      const deckContribution = Math.min(selectedCount, deckSize) * deckEV;
+      const discardContribution = Math.max(selectedCount - deckSize, 0) * discardEV;
+
+      return sum + deckContribution + discardContribution;
+    }, 0);
 
     // Precompute probabilities of zero and one blanks for each color.
     const probZeroBlankSingleDeck = colors.reduce((acc, color) => {

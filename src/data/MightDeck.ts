@@ -19,10 +19,10 @@ export default class MightDeck {
       : [...dice.faces, ...dice.faces, ...dice.faces];
     this.display = display ? [...display] : [];
     this._discard = discard ? [...discard] : [];
-    this.deckAverage = this.deck.reduce((sum, card) => sum + card.value, 0)/this.deck.length;
-    this.deckEV = this.calculateEV(this.deck);
-    this.discardAverage = this.discard.reduce((sum, card) => sum + card.value, 0)/this.discard.length;
-    this.discardEV = this.calculateEV(this.discard);
+    this.deckAverage = this.deck.length ? this.deck.reduce((sum, card) => sum + card.value, 0)/this.deck.length : 0;
+    this.deckEV = this.deck.length ? this.calculateEV(this.deck) : 0
+    this.discardAverage = this.discard.length ? this.discard.reduce((sum, card) => sum + card.value, 0)/this.discard.length : 0;
+    this.discardEV = this.discard.length ? this.calculateEV(this.discard) : 0;
   }
 
   clone(): MightDeck {
@@ -111,8 +111,8 @@ export default class MightDeck {
 
   set discard(cards: MightCard[]) {
     this._discard = cards;
-    this.discardAverage = this.discard.reduce((sum, card) => sum + card.value, 0)/this.discard.length;
-    this.discardEV = this.calculateEV(this.discard);
+    this.discardAverage = cards.length ? this.discard.reduce((sum, card) => sum + card.value, 0)/this.discard.length : 0;
+    this.discardEV = cards.length ?  this.calculateEV(this.discard) : 0;
 
     if (this.deck.length === 0) {
       this.deckAverage = this.discardAverage;
