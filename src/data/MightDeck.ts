@@ -4,17 +4,25 @@ import { factorial } from './MathFunctions';
 
 export default class MightDeck {
   dice: MightDice;
-  deck: MightCard[];
+  private _deck: MightCard[];
   display: MightCard[];
-  discard: MightCard[];
+  private _discard: MightCard[];
+  deckAverage: number;
+  deckEV: number;
+  discardAverage: number;
+  discardEV: number;
 
   constructor(dice: MightDice, deck?: MightCard[], display?: MightCard[], discard?: MightCard[]) {
     this.dice = dice;
-    this.deck = deck
+    this._deck = deck
       ? [...deck]
       : [...dice.faces, ...dice.faces, ...dice.faces];
     this.display = display ? [...display] : [];
-    this.discard = discard ? [...discard] : [];
+    this._discard = discard ? [...discard] : [];
+    this.deckAverage = this.deck.reduce((sum, card) => sum + card.value, 0)/this.deck.length;
+    this.deckEV = this.calculateEV(this.deck);
+    this.discardAverage = this.discard.reduce((sum, card) => sum + card.value, 0)/this.discard.length;
+    this.discardEV = this.calculateEV(this.discard);
   }
 
   clone(): MightDeck {
@@ -30,11 +38,6 @@ export default class MightDeck {
     return this;
   }
 
-  draw(): MightCard {
-    const [result] = this.drawN();
-    return result;
-  }
-
   drawN(times: number = 1): MightCard[] {
     if (this.deck.length === 0) {
       this.deck = this.discard;
@@ -44,6 +47,7 @@ export default class MightDeck {
 
     if (times <= this.deck.length) {
       const result = this.deck.splice(0, times);
+      this.deck = [...this.deck];
       this.display = this.display.concat(result);
       return result;
     }
@@ -70,14 +74,13 @@ export default class MightDeck {
     const remaining = this.deck.splice(0, remainder);
     result = result.concat(remaining);
     this.discard = remaining;
+
     return result;
   }
 
   discardDisplay() {
-    console.log('Discard & Display', this.discard, this.display)
     this.discard = [ ...this.discard, ...this.display];
     this.display = [];
-    console.log('Discard & Display', this.discard, this.display)
   }
 
   get size(): number {
@@ -92,13 +95,26 @@ export default class MightDeck {
     return this.deck.filter((v) => v.critical).length;
   }
 
-  get ev(): number {
-    if (this.deck.length === 0) {
-        return this.calculateAverage(this.discard);
-    }
-
-    return this.calculateAverage(this.deck);
+  get deck() {
+    return this._deck;
   }
+
+  set deck(cards: MightCard[]) {
+    this._deck = cards;
+    this.deckAverage = this.deck.reduce((sum, card) => sum + card.value, 0)/this.deck.length;
+    this.deckEV = this.calculateEV(this.deck);
+  }
+
+  get discard() {
+    return this._discard;
+  }
+
+  set discard(cards: MightCard[]) {
+    this._discard = cards;
+    this.discardAverage = this.discard.reduce((sum, card) => sum + card.value, 0)/this.discard.length;
+    this.discardEV = this.calculateEV(this.discard);
+  }
+
 
   probZeroBlank(drawSize: number): number {
     const deckSize = this.deck.length;
@@ -206,7 +222,7 @@ Discard(${this.discard.length}):
 ${summarize(MightDeck.sort(this.discard))}`;
   }
 
-  private calculateAverage(cards: { value: number; critical?: boolean }[]): number {
+  private calculateEV(cards: { value: number; critical?: boolean }[]): number {
     let total = cards.reduce((sum, card) => sum + card.value, 0);
 
     if (cards.some(card => card.critical)) {
@@ -224,7 +240,7 @@ ${summarize(MightDeck.sort(this.discard))}`;
 
     remainingDeck = [...remainingDeck.slice(0, cardIndex), ...remainingDeck.slice(cardIndex + 1)];
 
-    totalAdjustedEv += this.calculateAverage(remainingDeck);
+    totalAdjustedEv += this.calculateEV(remainingDeck);
 
     return totalAdjustedEv;
   }

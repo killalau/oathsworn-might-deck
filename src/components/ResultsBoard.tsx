@@ -34,7 +34,7 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
   if (app.state.isEncounter) {
 
     ev = colors.reduce(
-      (sum, color) => sum + app.state.encounterDeck[color].ev * app.state.selections[color],
+      (sum, color) => sum + app.state.encounterDeck[color].deckAverage * app.state.selections[color],
       0
     );
 
@@ -43,7 +43,7 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
   } else {
 
     ev = colors.reduce(
-      (sum, color) => sum + app.state.oathswornDeck[color].ev * app.state.selections[color],
+      (sum, color) => sum + app.state.oathswornDeck[color].deckEV * app.state.selections[color],
       0
     );
 
@@ -71,7 +71,6 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
           1
         ) * probOneBlankSingleDeck[excludedColor]
     );
-    console.log('Probabiities Zero and One Blank', probZeroBlankSingleDeck, probOneBlankSingleDeck)
 
     // Sum up all the probabilities for exactly one blank.
     hitChance += probOneBlank.reduce((sum, value) => sum + value, 0);
