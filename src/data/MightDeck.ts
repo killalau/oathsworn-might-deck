@@ -84,7 +84,7 @@ export default class MightDeck {
   }
 
   get size(): number {
-    return this.deck.length + this.discard.length;
+    return this.deck.length + this.display.length + this.discard.length;
   }
 
   get blanks(): number {
