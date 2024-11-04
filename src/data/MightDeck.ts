@@ -230,6 +230,10 @@ ${summarize(MightDeck.sort(this.discard))}`;
   private calculateEV(cards: { value: number; critical?: boolean }[]): number {
     let total = cards.reduce((sum, card) => sum + card.value, 0);
 
+    if (cards.every(card => card.critical)) {
+      return cards.length > 0 ? total : 0;
+    }
+
     if (cards.some(card => card.critical)) {
       total += this.calculateAdjustedEv(cards);
     }

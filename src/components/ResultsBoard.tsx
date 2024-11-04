@@ -49,12 +49,17 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
   } else {
 
     ev = colors.reduce((sum, color) => {
-      const { deckEV, discardEV } = app.state.oathswornDeck[color];
+      const { deckEV, deckAverage, discardEV, crits } = app.state.oathswornDeck[color];
       const deckSize = app.state.oathswornDeck[color].deck.length;
       const selectedCount = app.state.selections[color];
     
-      const deckContribution = Math.min(selectedCount, deckSize) * deckEV;
-      const discardContribution = Math.max(selectedCount - deckSize, 0) * discardEV;
+      const deckContribution = deckSize > selectedCount && deckSize - selectedCount >= crits
+      ? selectedCount * deckEV
+      : deckSize * deckAverage;
+  
+      const discardContribution = deckSize > selectedCount
+      ? Math.max(crits - (deckSize - selectedCount), 0) * discardEV
+      : (selectedCount - deckSize + crits) * discardEV;
 
       return sum + deckContribution + discardContribution;
     }, 0);
