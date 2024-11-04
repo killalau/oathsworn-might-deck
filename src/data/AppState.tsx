@@ -35,7 +35,7 @@ interface AppStateContextProps {
 }
 
 const createDefaultAppState = (): AppState => ({
-  isEncounter: true,
+  isEncounter: false,
   encounterDeck: new MightDeckOrganizer(true),
   oathswornDeck: new MightDeckOrganizer(true),
   selections: { ...defaultMightCardsSelection },
@@ -109,7 +109,22 @@ export const AppStateProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }),
 
     discardDrawResults: () =>
-      setState((prev) => ({ ...prev, drawResults: [] })),
+      setState((prev) => {
+        const updates = prev.isEncounter
+          ? prev.encounterDeck.clone()
+          : prev.oathswornDeck.clone();
+          updates.white.discardDisplay();
+          updates.yellow.discardDisplay();
+          updates.red.discardDisplay();
+          updates.black.discardDisplay();
+
+        return{
+          ...prev,
+          drawResults: [],
+          [prev.isEncounter ? 'encounterDeck' : 'oathswornDeck']: updates
+        }
+      })
+
   };
 
   return (
