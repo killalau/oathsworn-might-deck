@@ -11,8 +11,9 @@ Features of this digital implementation:
  - for the individual decks, i.e., the expected value for the next card drawn from each individual deck
  - for any combination of cards to be drawn from the four decks
 
-[Demo link (with statistics)](https://drdonik.github.io/oathsworn-might-deck/)
-[Demo link (without statistics)](https://killalau.github.io/oathsworn-might-deck/)
+[Demo link (DrDonik's version with statistics)](https://drdonik.github.io/oathsworn-might-deck/)
+
+[Demo link (killalau's version without statistics)](https://killalau.github.io/oathsworn-might-deck/)
 
 ## Development
 
