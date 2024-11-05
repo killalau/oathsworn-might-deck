@@ -48,17 +48,18 @@ export default class MightDeck {
     if (times <= this.deck.length) {
       const result = this.deck.splice(0, times);
       this.deck = [...this.deck];
-      this.display = this.display.concat(result);
+      this.display = [...this.display, ...result];
       return result;
     }
 
-    if (times <= this.size) {
-      const result = [...this.deck];
+    if (times <= this.deck.length + this.discard.length) {
+      let result = [...this.deck];
+      this.display = [...this.display, ...result];
       this.deck = this.discard;
       this.discard = [];
-      this.display = result;
       this.shuffle();
-      return [...result, ...this.drawN(times - this.display.length)];
+      result.push(...this.drawN(times - result.length));
+      return result;
     }
 
     // times > deck.length + discard.length
