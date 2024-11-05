@@ -1,4 +1,5 @@
-import { Chip, Grid, Typography, colors } from '@mui/material';
+import { Chip, Typography, colors } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { makeStyles } from '@mui/styles';
 import { FC } from 'react';
 import { useAppState } from '../data/AppState';
@@ -96,38 +97,38 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
 
   return (
     <Grid container spacing={1}>
-      <Grid item xs={12} container>
-        <Grid item xs={6} sm={3}>
+      <Grid size={12} container>
+        <Grid size={{ xs: 6, sm: 3}}>
           <Typography>Expected Value: {ev.toFixed(1)}</Typography>
         </Grid>
-        <Grid item xs={6} sm={3}>
+        <Grid size={{ xs: 6, sm: 3}}>
           <Typography>Hit Chance: {(hitChance*100).toFixed(0)}%</Typography>
         </Grid>
-        <Grid item xs={6} sm={3}>
+        <Grid size={{ xs: 6, sm: 3}}>
           <Typography>Corrected EV: {(ev*hitChance).toFixed(1)}</Typography>
         </Grid>
-        <Grid item xs={6} sm={3}>
+        <Grid size={{ xs: 6, sm: 3}}>
         </Grid>
       </Grid>
-      <Grid item xs={12} container>
-        <Grid item xs={6} sm={3}>
+      <Grid size={12} container>
+        <Grid size={{ xs: 6, sm: 3}}>
           <Typography>Damage: {damage}</Typography>
         </Grid>
-        <Grid item xs={6} sm={3}>
+        <Grid size={{ xs: 6, sm: 3}}>
           <Typography>Critical Hits: {criticalHits}</Typography>
         </Grid>
-        <Grid item xs={6} sm={3}>
+        <Grid size={{ xs: 6, sm: 3}}>
           <Typography>Blanks: {blanks}</Typography>
         </Grid>
-        <Grid item xs={6} sm={3}>
+        <Grid size={{ xs: 6, sm: 3}}>
           {missed && <Chip color="error" label="Missed" size="small" />}
         </Grid>
       </Grid>
-      <Grid item xs={12} className={classes.results}>
+      <Grid size={12} className={classes.results}>
         <Grid container spacing={1}>
           {values.map((row, i) =>
             row.map((v, j) => (
-              <Grid item xs={6} sm={3} key={`${i}-${j}`}>
+              <Grid size={{ xs: 6, sm: 3}} key={`${i}-${j}`}>
                 <CMightCard
                   color={v.color}
                   new={i === 0}
