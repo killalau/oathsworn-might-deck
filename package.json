@@ -32,7 +32,8 @@
     "deploy": "react-scripts build && gh-pages -d build",
     "test": "react-scripts test --watchAll=false",
     "test:watch": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "husky"
   },
   "eslintConfig": {
     "extends": [
@@ -54,6 +55,7 @@
   },
   "devDependencies": {
     "gh-pages": "^6.1.1",
+    "husky": "^9.1.6",
     "prettier": "3.2.5"
   }
 }
