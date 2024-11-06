@@ -9,6 +9,6 @@ test('renders deck toggle', () => {
       <App />
     </AppStateProvider>,
   );
-  const el = screen.getByText(/Encounter Deck/i);
+  const el = screen.getByText(/Oathsworn Might Deck/i);
   expect(el).toBeInTheDocument();
 });

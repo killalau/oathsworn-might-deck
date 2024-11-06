@@ -35,7 +35,7 @@ interface AppStateContextProps {
 }
 
 const createDefaultAppState = (): AppState => ({
-  isEncounter: true,
+  isEncounter: false,
   encounterDeck: new MightDeckOrganizer(true),
   oathswornDeck: new MightDeckOrganizer(true),
   selections: { ...defaultMightCardsSelection },
