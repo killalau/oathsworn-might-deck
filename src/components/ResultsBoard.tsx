@@ -81,9 +81,9 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
       1
     )
 
-    // Calculate expected values  of zero blank across all color decks.
-    evCorrected = colors.reduce(
-      (ev, color) => ev + probZeroBlankSingleDeck[color] * app.state.oathswornDeck[color].deckNoBlanksEV * app.state.selections[color],
+    // Calculate expected values of zero blank across all color decks.
+    evCorrected = hitChance*colors.reduce(
+      (ev, color) => ev + app.state.oathswornDeck[color].deckNoBlanksEV * app.state.selections[color],
       0
     )
     
