@@ -43,7 +43,7 @@ function App() {
       </AppBar>
 
       <Grid container padding={2} spacing={2} className={classes.main}>
-        <Grid size={{ xs: 12, sm: 6}}>
+        <Grid size={{ xs: 12, sm: 4}}>
           <CMightDeckOrganizer
             type={isEncounter ? 'encounter' : 'oathsworn'}
             value={isEncounter ? encounterDeck : oathswornDeck}
@@ -51,7 +51,7 @@ function App() {
             onSelect={app.actions.setSelections}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6}}>
+        <Grid size={{ xs: 12, sm: 8}}>
           <CResultsBoard values={drawResults} />
         </Grid>
       </Grid>
