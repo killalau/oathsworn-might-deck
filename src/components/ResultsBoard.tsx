@@ -5,6 +5,7 @@ import { FC } from 'react';
 import { useAppState } from '../data/AppState';
 import MightCard from '../data/MightCard';
 import CMightCard from './Card';
+import MightDeck from '../data/MightDeck';
 
 export type CResultsBoardProps = {
   values: MightCard[][];
@@ -50,28 +51,28 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
   } else {
 
     ev = colors.reduce((sum, color) => {
-      const { deckEV, deckAverage, discardEV, crits } = app.state.oathswornDeck[color];
-      const deckSize = app.state.oathswornDeck[color].deck.length;
+      const { deck, deckEV, deckAverage, discardEV, crits: nCrits } = app.state.oathswornDeck[color];
+      const deckSize = deck.length;
       const selectedCount = app.state.selections[color];
     
-      const deckContribution = deckSize > selectedCount && deckSize - selectedCount >= crits
+      const deckContribution = deckSize > selectedCount && deckSize - selectedCount >= nCrits
       ? selectedCount * deckEV
       : deckSize * deckAverage;
   
       const discardContribution = deckSize > selectedCount
-      ? Math.max(crits - (deckSize - selectedCount), 0) * discardEV
-      : (selectedCount - deckSize + crits) * discardEV;
+      ? Math.max(nCrits - (deckSize - selectedCount), 0) * discardEV
+      : (selectedCount - deckSize + nCrits) * discardEV;
 
       return sum + deckContribution + discardContribution;
     }, 0);
 
     // Precompute probabilities of zero and one blanks for each color.
     const probZeroBlankSingleDeck = colors.reduce((acc, color) => {
-      acc[color] = app.state.oathswornDeck[color].probZeroBlank(app.state.selections[color]);
+      acc[color] = MightDeck.probZeroBlank(app.state.oathswornDeck[color].deck, app.state.oathswornDeck[color].discard, app.state.selections[color]);
       return acc;
     }, {} as Record<typeof colors[number], number>);
     const probOneBlankSingleDeck = colors.reduce((acc, color) => {
-      acc[color] = app.state.oathswornDeck[color].probOneBlank(app.state.selections[color]);
+      acc[color] = MightDeck.probOneBlank(app.state.oathswornDeck[color].deck, app.state.oathswornDeck[color].discard, app.state.selections[color]);
       return acc;
     }, {} as Record<typeof colors[number], number>);
     
