@@ -4,29 +4,23 @@ import { factorial } from './MathFunctions';
 
 export default class MightDeck {
   dice: MightDice;
-  private _deck: MightCard[];
-  display: MightCard[];
-  private _discard: MightCard[];
-  deckAverage: number;
-  deckEV: number;
-  deckNoBlanksEV: number;
-  discardAverage: number;
-  discardEV: number;
-  discardNoBlanksEV: number;
+  private _deck: MightCard[] = [];
+  display: MightCard[] = [];
+  private _discard: MightCard[] = [];
+  deckAverage: number = 0;
+  deckEV: number = 0;
+  deckNoBlanksEV: number = 0;
+  discardAverage: number = 0;
+  discardEV: number = 0;
+  discardNoBlanksEV: number = 0;
 
   constructor(dice: MightDice, deck?: MightCard[], display?: MightCard[], discard?: MightCard[]) {
     this.dice = dice;
-    this._deck = deck
+    this.deck = deck
       ? [...deck]
       : [...dice.faces, ...dice.faces, ...dice.faces];
     this.display = display ? [...display] : [];
-    this._discard = discard ? [...discard] : [];
-    this.deckAverage = this.deck.length ? this.deck.reduce((sum, card) => sum + card.value, 0)/this.deck.length : 0;
-    this.deckEV = this.deck.length ? MightDeck.calculateEV(this.deck) : 0
-    this.deckNoBlanksEV = this.deck.length ? MightDeck.calculateNoBlanksEV(this.deck) : 0
-    this.discardAverage = this.discard.length ? this.discard.reduce((sum, card) => sum + card.value, 0)/this.discard.length : 0;
-    this.discardEV = this.discard.length ? MightDeck.calculateEV(this.discard) : 0;
-    this.discardNoBlanksEV = this.discard.length ? MightDeck.calculateNoBlanksEV(this.discard) : 0
+    this.discard = discard ? [...discard] : [];
   }
 
   clone(): MightDeck {
@@ -106,9 +100,9 @@ export default class MightDeck {
 
   set deck(cards: MightCard[]) {
     this._deck = cards;
-    this.deckAverage = cards.length ? this.deck.reduce((sum, card) => sum + card.value, 0)/this.deck.length : this.discardAverage;
-    this.deckEV = cards.length ? MightDeck.calculateEV(this.deck) : this.discardEV;
-    this.deckNoBlanksEV = cards.length ? MightDeck.calculateNoBlanksEV(this.deck) : this.discardEV;
+    this.deckAverage = cards.length ? cards.reduce((sum, card) => sum + card.value, 0)/cards.length : this.discardAverage;
+    this.deckEV = cards.length ? MightDeck.calculateEV(cards) : this.discardEV;
+    this.deckNoBlanksEV = cards.length ? MightDeck.calculateNoBlanksEV(cards) : this.discardEV;
   }
 
   get discard() {
@@ -117,9 +111,9 @@ export default class MightDeck {
 
   set discard(cards: MightCard[]) {
     this._discard = cards;
-    this.discardAverage = cards.length ? this.discard.reduce((sum, card) => sum + card.value, 0)/this.discard.length : 0;
-    this.discardEV = cards.length ?  MightDeck.calculateEV(this.discard) : 0;
-    this.discardNoBlanksEV = cards.length ? MightDeck.calculateNoBlanksEV(this.discard) : 0;
+    this.discardAverage = cards.length ? cards.reduce((sum, card) => sum + card.value, 0)/cards.length : 0;
+    this.discardEV = cards.length ?  MightDeck.calculateEV(cards) : 0;
+    this.discardNoBlanksEV = cards.length ? MightDeck.calculateNoBlanksEV(cards) : 0;
 
     if (this.deck.length === 0) {
       this.deckAverage = this.discardAverage;
