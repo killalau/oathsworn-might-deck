@@ -101,8 +101,8 @@ export default class MightDeck {
   set deck(cards: MightCard[]) {
     this._deck = cards;
     this.deckAverage = cards.length ? cards.reduce((sum, card) => sum + card.value, 0)/cards.length : this.discardAverage;
-    this.deckEV = cards.length ? MightDeck.calculateEV(cards) : this.discardEV;
-    this.deckNoBlanksEV = cards.length ? MightDeck.calculateNoBlanksEV(cards) : this.discardEV;
+    this.deckNoBlanksEV = cards.length ? MightDeck.calculateNoBlanksEV(cards) : this.discardNoBlanksEV;
+    this.deckEV = cards.length ? this.deckNoBlanksEV*MightDeck.probZeroBlank(cards, this.discard, 1) : this.discardEV;
   }
 
   get discard() {
@@ -112,8 +112,8 @@ export default class MightDeck {
   set discard(cards: MightCard[]) {
     this._discard = cards;
     this.discardAverage = cards.length ? cards.reduce((sum, card) => sum + card.value, 0)/cards.length : 0;
-    this.discardEV = cards.length ?  MightDeck.calculateEV(cards) : 0;
     this.discardNoBlanksEV = cards.length ? MightDeck.calculateNoBlanksEV(cards) : 0;
+    this.discardEV = cards.length ?  this.discardNoBlanksEV*MightDeck.probZeroBlank(cards, [], 1) : 0;
 
     if (this.deck.length === 0) {
       this.deckAverage = this.discardAverage;

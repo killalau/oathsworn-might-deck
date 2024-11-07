@@ -31,7 +31,8 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
 
   const colors = ["black", "red", "yellow", "white"] as const;
   let ev = 0;
-  let hitChance = 0;
+  let evCorrected = 0;
+  let hitChance = 1;
 
   if (app.state.isEncounter) {
 
@@ -45,8 +46,6 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
 
       return sum + deckContribution + discardContribution;
     }, 0);
-
-    hitChance = 1;
 
   } else {
 
@@ -76,12 +75,19 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
       return acc;
     }, {} as Record<typeof colors[number], number>);
     
+    // Calculate probabilities of zero blank across all color decks.
     hitChance = colors.reduce(
       (prob, color) => prob * probZeroBlankSingleDeck[color],
       1
     )
 
-    // Calculate probabilities of exactly one blank across all color scenarios.
+    // Calculate expected values  of zero blank across all color decks.
+    evCorrected = colors.reduce(
+      (ev, color) => ev + probZeroBlankSingleDeck[color] * app.state.oathswornDeck[color].deckNoBlanksEV * app.state.selections[color],
+      0
+    )
+    
+    // Calculate probabilities of exactly one blank across all color decks.
     const probOneBlank = colors.map((excludedColor) =>
       colors
         .filter((color) => color !== excludedColor)
@@ -91,8 +97,25 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
         ) * probOneBlankSingleDeck[excludedColor]
     );
 
+    // Calculate expected values of exactly one blank across all color decks.
+    const evOneBlank = colors.map((excludedColor) =>
+      colors
+        .filter((color) => color !== excludedColor)
+        .reduce(
+          (prob, color) => prob * probZeroBlankSingleDeck[color],
+          1
+        ) * probOneBlankSingleDeck[excludedColor]
+        * (colors
+        .filter((color) => color !== excludedColor)
+        .reduce(
+          (ev, color) => ev + app.state.oathswornDeck[color].deckNoBlanksEV * app.state.selections[color],
+          0
+        ) + app.state.oathswornDeck[excludedColor].deckNoBlanksEV * (app.state.selections[excludedColor] - 1))
+    );
+
     // Sum up all the probabilities for exactly one blank.
     hitChance += probOneBlank.reduce((sum, value) => sum + value, 0);
+    evCorrected += evOneBlank.reduce((sum, value) => sum + value, 0);
 
   }
 
@@ -100,13 +123,13 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
     <Grid container spacing={1}>
       <Grid size={12} container>
         <Grid size={{ xs: 6, sm: 3}}>
-          <Typography>Expected Value: {ev.toFixed(1)}</Typography>
+          <Typography>Expected Hit Value: {ev.toFixed(1)}</Typography>
         </Grid>
         <Grid size={{ xs: 6, sm: 3}}>
           <Typography>Hit Chance: {(hitChance*100).toFixed(0)}%</Typography>
         </Grid>
         <Grid size={{ xs: 6, sm: 3}}>
-          <Typography>Corrected EV: {(ev*hitChance).toFixed(1)}</Typography>
+          <Typography>Corrected EV: {(evCorrected).toFixed(1)}</Typography>
         </Grid>
         <Grid size={{ xs: 6, sm: 3}}>
         </Grid>
