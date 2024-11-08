@@ -194,49 +194,34 @@ Discard(${this.discard.length}):
 ${summarize(MightDeck.sort(this.discard))}`;
   }
 
-  static calculateEV(cards: { value: number; critical: boolean }[]): number {
-    let total = cards.reduce((sum, card) => sum + card.value, 0);
-    const nCrits = cards.filter((card) => card.critical).length;
-
-    if (cards.every(card => card.critical)) {
-      return cards.length > 0 ? total : 0;
-    }
-
-    if (cards.some(card => card.critical)) {
-      total += MightDeck.calculateAdjustedEv(cards)*nCrits;
-    }
-
-    return cards.length > 0 ? total / cards.length : 0;
-  }
-
   static calculateNoBlanksEV(cards: { value: number; critical: boolean}[]): number {
     const nonBlankCards = cards.filter((card) => card.value !== 0);
 
     let total = nonBlankCards.reduce((sum, card) => sum + card.value, 0);
-    const nCrits = nonBlankCards.reduce((count, card) => card.critical ? count + 1 : count, 0);
 
     if (nonBlankCards.every(card => card.critical)) {
       return nonBlankCards.length > 0 ? total : 0;
     }
 
     if (nonBlankCards.some(card => card.critical)) {
-      total += MightDeck.calculateAdjustedEv(cards)*nCrits;
+      total += MightDeck.calculateAdjustedEv(cards);
     }
 
     return cards.length > 0 ? total / nonBlankCards.length : 0;
   }
 
   static calculateAdjustedEv(cards: { value: number; critical: boolean }[]): number {
-    let totalAdjustedEv = 0;
-    let remainingDeck = [...cards];
+    let remainingDeck = [...cards]
+    let adjustedEV = 0
 
-    let cardIndex = remainingDeck.findIndex(card => card.critical);
+    while (remainingDeck.some(card => card.critical)) {
+      const cardIndex = remainingDeck.findIndex(card => card.critical);
+      remainingDeck.splice(cardIndex, 1);
 
-    remainingDeck = [...remainingDeck.slice(0, cardIndex), ...remainingDeck.slice(cardIndex + 1)];
+      adjustedEV += remainingDeck.reduce((sum, card) => sum + card.value, 0)/remainingDeck.length
+    }
 
-    totalAdjustedEv += this.calculateEV(remainingDeck);
-
-    return totalAdjustedEv;
+    return adjustedEV;
   }
 
   static sort(cards: MightCard[]): MightCard[] {
