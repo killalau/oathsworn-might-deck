@@ -49,22 +49,6 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
 
   } else {
 
-    ev = colors.reduce((sum, color) => {
-      const { deck, deckEV, deckAverage, discardEV, crits: nCrits } = app.state.oathswornDeck[color];
-      const deckSize = deck.length;
-      const selectedCount = app.state.selections[color];
-    
-      const deckContribution = deckSize > selectedCount && deckSize - selectedCount >= nCrits
-      ? selectedCount * deckEV
-      : deckSize * deckAverage;
-  
-      const discardContribution = deckSize > selectedCount
-      ? Math.max(nCrits - (deckSize - selectedCount), 0) * discardEV
-      : (selectedCount - deckSize + nCrits) * discardEV;
-
-      return sum + deckContribution + discardContribution;
-    }, 0);
-
     // Precompute probabilities of zero and one blanks for each color.
     const probZeroBlankSingleDeck = colors.reduce((acc, color) => {
       acc[color] = MightDeck.probZeroBlank(app.state.oathswornDeck[color].deck, app.state.oathswornDeck[color].discard, app.state.selections[color]);
@@ -83,9 +67,21 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
 
     // Calculate expected values of zero blank across all color decks.
     evCorrected = hitChance*colors.reduce(
-      (ev, color) => ev + app.state.oathswornDeck[color].deckNoBlanksEV * app.state.selections[color],
-      0
-    )
+      (ev, color) => {
+        const { deck, deckAverage, discardNoBlanksEV, crits: nCrits , deckNoBlanksEV} = app.state.oathswornDeck[color];
+        const deckSize = deck.length;
+        const selectedCount = app.state.selections[color];
+      
+        const deckContribution = deckSize > selectedCount && deckSize - selectedCount >= nCrits
+        ? selectedCount * deckNoBlanksEV
+        : deckSize * deckAverage;
+    
+        const discardContribution = deckSize > selectedCount
+        ? Math.max(nCrits - (deckSize - selectedCount), 0) * discardNoBlanksEV
+        : (selectedCount - deckSize + nCrits) * discardNoBlanksEV;
+        
+        return ev + deckContribution + discardContribution;
+      }, 0);
     
     // Calculate probabilities of exactly one blank across all color decks.
     const probOneBlank = colors.map((excludedColor) =>
@@ -98,8 +94,20 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
     );
 
     // Calculate expected values of exactly one blank across all color decks.
-    const evOneBlank = colors.map((excludedColor) =>
-      colors
+    const evOneBlank = colors.map((excludedColor) => {
+      const { deck, deckAverage, discardNoBlanksEV, crits: nCrits , deckNoBlanksEV} = app.state.oathswornDeck[excludedColor];
+      const deckSize = deck.length;
+      const selectedCount = app.state.selections[excludedColor];
+    
+      const deckContribution = deckSize > selectedCount && deckSize - selectedCount >= nCrits
+      ? (selectedCount-1) * deckNoBlanksEV
+      : deckSize * deckAverage;
+  
+      const discardContribution = deckSize > selectedCount
+      ? Math.max(nCrits - (deckSize - selectedCount), 0) * discardNoBlanksEV
+      : (selectedCount - deckSize + nCrits) * discardNoBlanksEV;
+      
+      return colors
         .filter((color) => color !== excludedColor)
         .reduce(
           (prob, color) => prob * probZeroBlankSingleDeck[color],
@@ -108,14 +116,30 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
         * (colors
         .filter((color) => color !== excludedColor)
         .reduce(
-          (ev, color) => ev + app.state.oathswornDeck[color].deckNoBlanksEV * app.state.selections[color],
-          0
-        ) + app.state.oathswornDeck[excludedColor].deckNoBlanksEV * (app.state.selections[excludedColor] - 1))
+          (ev, color) => {
+            const { deck, deckAverage, discardNoBlanksEV, crits: nCrits , deckNoBlanksEV} = app.state.oathswornDeck[color];
+            const deckSize = deck.length;
+            const selectedCount = app.state.selections[color];
+          
+            const deckContribution = deckSize > selectedCount && deckSize - selectedCount >= nCrits
+            ? selectedCount * deckNoBlanksEV
+            : deckSize * deckAverage;
+        
+            const discardContribution = deckSize > selectedCount
+            ? Math.max(nCrits - (deckSize - selectedCount), 0) * discardNoBlanksEV
+            : (selectedCount - deckSize + nCrits) * discardNoBlanksEV;
+            
+            return ev + deckContribution + discardContribution;          
+          }, 0
+        ) + deckContribution + discardContribution)
+      }
     );
 
     // Sum up all the probabilities for exactly one blank.
     hitChance += probOneBlank.reduce((sum, value) => sum + value, 0);
     evCorrected += evOneBlank.reduce((sum, value) => sum + value, 0);
+
+    ev = hitChance ? evCorrected / hitChance: 0;
 
   }
 
