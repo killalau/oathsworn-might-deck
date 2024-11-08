@@ -86,12 +86,12 @@ export default class MightDeck {
     return this.deck.length + this.display.length + this.discard.length;
   }
 
-  get blanks(): number {
-    return this.deck.filter((v) => !v.value).length;
+  get nBlanks(): number {
+    return this.deck.reduce((count, card) => !card.value ? count + 1 : count, 0);
   }
 
-  get crits(): number {
-    return this.deck.filter((v) => v.critical).length;
+  get nCrits(): number {
+    return this.deck.reduce((count, card) => card.critical ? count + 1 : count, 0);
   }
 
   get deck() {
@@ -125,7 +125,7 @@ export default class MightDeck {
 
   static probZeroBlank(cards: { value: number }[], discards: { value: number }[], drawSize: number): number {
     const deckSize = cards.length;
-    const blanksInDeck = cards.filter((card) => !card.value).length;
+    const blanksInDeck = cards.reduce((count, card) => !card.value ? count + 1 : count, 0);
 
     if(drawSize <= deckSize && blanksInDeck === 0)
       return 1;
@@ -150,27 +150,27 @@ export default class MightDeck {
 
   static probOneBlank(cards: { value: number }[], discards: { value: number }[], drawSize: number): number {
     const deckSize = cards.length;
-    const blanksInDeck = cards.filter((card) => !card.value).length;
+    const nBlanks = cards.reduce((count, card) => !card.value ? count + 1 : count, 0);
     
     if (drawSize === 0)
       return 0;
 
     if(drawSize === deckSize)
-      return blanksInDeck === 1 ? 1 : 0;
+      return nBlanks === 1 ? 1 : 0;
     
-    if(drawSize >= deckSize && blanksInDeck > 1)
+    if(drawSize >= deckSize && nBlanks > 1)
       return 0;
 
     if (drawSize > deckSize) {
       // reaching this point, there is 0 or 1 blank in the deck
 
-      return blanksInDeck ? MightDeck.probZeroBlank(discards, [], drawSize-deckSize) : MightDeck.probOneBlank(discards, [], drawSize-deckSize);
+      return nBlanks ? MightDeck.probZeroBlank(discards, [], drawSize-deckSize) : MightDeck.probOneBlank(discards, [], drawSize-deckSize);
     }
 
-    if(drawSize > deckSize-blanksInDeck+1)
+    if(drawSize > deckSize-nBlanks+1)
       return 0;
   
-    return blanksInDeck*drawSize*factorial(deckSize - blanksInDeck)/factorial(deckSize-blanksInDeck-drawSize+1)*factorial(deckSize-drawSize)/factorial(deckSize);
+    return nBlanks*drawSize*factorial(deckSize - nBlanks)/factorial(deckSize-nBlanks-drawSize+1)*factorial(deckSize-drawSize)/factorial(deckSize);
   }
 
   toString(): string {
@@ -213,7 +213,7 @@ ${summarize(MightDeck.sort(this.discard))}`;
     const nonBlankCards = cards.filter((card) => card.value !== 0);
 
     let total = nonBlankCards.reduce((sum, card) => sum + card.value, 0);
-    const nCrits = nonBlankCards.filter((card) => card.critical).length;
+    const nCrits = nonBlankCards.reduce((count, card) => card.critical ? count + 1 : count, 0);
 
     if (nonBlankCards.every(card => card.critical)) {
       return nonBlankCards.length > 0 ? total : 0;

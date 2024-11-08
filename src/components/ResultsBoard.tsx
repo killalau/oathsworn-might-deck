@@ -68,7 +68,7 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
     // Calculate expected values of zero blank across all color decks.
     evCorrected = hitChance*colors.reduce(
       (ev, color) => {
-        const { deck, deckAverage, discardNoBlanksEV, crits: nCrits , deckNoBlanksEV} = app.state.oathswornDeck[color];
+        const { deck, deckAverage, discardNoBlanksEV, nCrits , deckNoBlanksEV} = app.state.oathswornDeck[color];
         const deckSize = deck.length;
         const selectedCount = app.state.selections[color];
       
@@ -95,7 +95,7 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
 
     // Calculate expected values of exactly one blank across all color decks.
     const evOneBlank = colors.map((excludedColor) => {
-      const { deck, deckAverage, discardNoBlanksEV, crits: nCrits , deckNoBlanksEV} = app.state.oathswornDeck[excludedColor];
+      const { deck, deckAverage, discardNoBlanksEV, nCrits , deckNoBlanksEV} = app.state.oathswornDeck[excludedColor];
       const deckSize = deck.length;
       const selectedCount = app.state.selections[excludedColor];
     
@@ -117,7 +117,7 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
         .filter((color) => color !== excludedColor)
         .reduce(
           (ev, color) => {
-            const { deck, deckAverage, discardNoBlanksEV, crits: nCrits , deckNoBlanksEV} = app.state.oathswornDeck[color];
+            const { deck, deckAverage, discardNoBlanksEV, nCrits , deckNoBlanksEV} = app.state.oathswornDeck[color];
             const deckSize = deck.length;
             const selectedCount = app.state.selections[color];
           
