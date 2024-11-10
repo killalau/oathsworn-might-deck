@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { FC } from 'react';
 import MightDeckOrganizer, {
   MightCardsSelection,
@@ -29,7 +29,7 @@ const CMightDeckOrganizer: FC<CMightDecksProps> = ({
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={6} sm={6}>
+      <Grid size={6}>
         <CMigthDeck
           type={type}
           value={value?.white}
@@ -39,7 +39,7 @@ const CMightDeckOrganizer: FC<CMightDecksProps> = ({
           }}
         />
       </Grid>
-      <Grid item xs={6} sm={6}>
+      <Grid size={6}>
         <CMigthDeck
           type={type}
           value={value?.yellow}
@@ -49,7 +49,7 @@ const CMightDeckOrganizer: FC<CMightDecksProps> = ({
           }}
         />
       </Grid>
-      <Grid item xs={6} sm={6}>
+      <Grid size={6}>
         <CMigthDeck
           type={type}
           value={value?.red}
@@ -59,7 +59,7 @@ const CMightDeckOrganizer: FC<CMightDecksProps> = ({
           }}
         />
       </Grid>
-      <Grid item xs={6} sm={6}>
+      <Grid size={6}>
         <CMigthDeck
           type={type}
           value={value?.black}

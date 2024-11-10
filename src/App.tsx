@@ -1,4 +1,5 @@
-import { AppBar, Button, Grid, Toolbar } from '@mui/material';
+import { AppBar, Button, Toolbar } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import CMightDeckOrganizer from './components/Organizer';
 import { useAppState } from './data/AppState';
 import CResultsBoard from './components/ResultsBoard';
@@ -42,7 +43,7 @@ function App() {
       </AppBar>
 
       <Grid container padding={2} spacing={2} className={classes.main}>
-        <Grid item xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4}}>
           <CMightDeckOrganizer
             type={isEncounter ? 'encounter' : 'oathsworn'}
             value={isEncounter ? encounterDeck : oathswornDeck}
@@ -50,7 +51,7 @@ function App() {
             onSelect={app.actions.setSelections}
           />
         </Grid>
-        <Grid item xs={12} sm={8}>
+        <Grid size={{ xs: 12, sm: 8}}>
           <CResultsBoard values={drawResults} />
         </Grid>
       </Grid>
