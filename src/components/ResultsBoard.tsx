@@ -4,6 +4,7 @@ import { FC } from 'react';
 import { useAppState } from '../data/AppState';
 import MightCard from '../data/MightCard';
 import CMightCard from './Card';
+import { MightCardsSelection } from '../data/MightDeckOrganizer';
 
 export type CResultsBoardProps = {
   values: MightCard[][];
@@ -27,8 +28,19 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
   const blanks = values.flat().filter((v) => !v.value).length;
   const missed = !app.state.isEncounter && blanks >= 2;
 
+  const deck = app.state.isEncounter ? app.state.encounterDeck : app.state.oathswornDeck;
+  const damageEV = (Object.keys(app.state.selections) as Array<keyof MightCardsSelection>).reduce((p: number, c) => {
+    return p + deck[c].nextCardEV * app.state.selections[c];
+  }, 0)
+    .toFixed(1);
+
   return (
     <Grid container spacing={1}>
+      <Grid item xs={12} container>
+        <Grid item xs={6} sm={4}>
+          <Typography>Damage (EV): {damageEV}</Typography>
+        </Grid>
+      </Grid>
       <Grid item xs={12} container>
         <Grid item xs={6} sm={3}>
           <Typography>Damage: {damage}</Typography>

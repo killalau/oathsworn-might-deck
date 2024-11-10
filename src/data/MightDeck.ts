@@ -1,5 +1,6 @@
 import MightCard from './MightCard';
 import MightDice from './MightDice';
+import { hypergeometricProbability } from '../modules/math';
 
 const calculateExpectedValue = (cards: MightCard[]) =>
   cards.reduce((p, c) => p + c.value, 0) / cards.length;
@@ -79,14 +80,41 @@ export default class MightDeck {
     return this.deck.filter((v) => v.value === 0).length;
   }
 
+  get nDiscardedBlanks(): number {
+    return this.discard.filter((v) => v.value === 0).length;
+  }
+
   get nCriticals(): number {
     return this.deck.filter((v) => v.critical).length;
+  }
+
+  get nDiscardedCriticals(): number {
+    return this.discard.filter((v) => v.critical).length;
   }
 
   get nextCardEV(): number {
     const drawPileEmpty = this.deck.length === 0;
     const nextPile = drawPileEmpty ? this.discard : this.deck;
     return calculateExpectedValue(nextPile);
+  }
+
+  zeroBlanksProbability(draws: number): number {
+    if (draws > this.deck.length) {
+      const drafFromDeck = this.deck.length;
+      const drafFromDiscard = draws - drafFromDeck;
+      return hypergeometricProbability(this.deck.length, drafFromDeck, this.nBlanks, 0) * hypergeometricProbability(this.discard.length, drafFromDiscard, this.nDiscardedBlanks, 0);
+    }
+    return hypergeometricProbability(this.deck.length, draws, this.nBlanks, 0);
+  }
+
+  exactlyOneBlankProbability(draws: number): number {
+    if (draws > this.deck.length) {
+      const drafFromDeck = this.deck.length;
+      const drafFromDiscard = draws - drafFromDeck;
+      return hypergeometricProbability(this.deck.length, drafFromDeck, this.nBlanks, 0) * hypergeometricProbability(this.discard.length, drafFromDiscard, this.nDiscardedBlanks, 1) +
+        hypergeometricProbability(this.deck.length, drafFromDeck, this.nBlanks, 1) * hypergeometricProbability(this.discard.length, drafFromDiscard, this.nDiscardedBlanks, 0);
+    }
+    return hypergeometricProbability(this.deck.length, draws, this.nBlanks, 1);
   }
 
   toString(): string {
