@@ -1,6 +1,9 @@
 import MightCard from './MightCard';
 import MightDice from './MightDice';
 
+const calculateExpectedValue = (cards: MightCard[]) =>
+  cards.reduce((p, c) => p + c.value, 0) / cards.length;
+
 export default class MightDeck {
   dice: MightDice;
   deck: MightCard[];
@@ -70,6 +73,20 @@ export default class MightDeck {
 
   get size(): number {
     return this.deck.length + this.discard.length;
+  }
+
+  get nBlanks(): number {
+    return this.deck.filter((v) => v.value === 0).length;
+  }
+
+  get nCriticals(): number {
+    return this.deck.filter((v) => v.critical).length;
+  }
+
+  get nextCardEV(): number {
+    const drawPileEmpty = this.deck.length === 0;
+    const nextPile = drawPileEmpty ? this.discard : this.deck;
+    return calculateExpectedValue(nextPile);
   }
 
   toString(): string {

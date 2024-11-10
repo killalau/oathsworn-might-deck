@@ -25,7 +25,8 @@ const CMigthDeck: FC<CMigthDeckProps> = ({
         onClick={onSelect}
       />
       <Badge color="primary" badgeContent={selected} sx={{ float: 'right' }} />
-      Deck: {value?.deck?.length ?? 0} / {value?.size ?? 0}
+      <div>Deck: {value?.deck?.length ?? 0} / EV: {value?.nextCardEV?.toFixed(1) ?? 0}</div>
+      <div>{`Blanks: ${value?.nBlanks ?? 0} / Crits: ${value?.nCriticals ?? 0}`}</div>
     </div>
   );
 };
