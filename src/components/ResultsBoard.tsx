@@ -34,10 +34,10 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
   }, 0)
     .toFixed(1);
   const deckColors = (Object.keys(app.state.selections) as Array<keyof MightCardsSelection>)
-  const p0 = app.state.isEncounter ? 0 : deckColors.reduce((prev: number, cur) => {
+  const p0 = app.state.isEncounter ? 1 : deckColors.reduce((prev: number, cur) => {
     return prev * deck[cur].zeroBlanksProbability(app.state.selections[cur]);
   }, 1);
-  const p1 = deckColors.reduce((prev: number, cur) => {
+  const p1 = app.state.isEncounter ? 0 : deckColors.reduce((prev: number, cur) => {
     const p = deckColors.reduce((p: number, c) => {
       return cur === c ?
         p * deck[c].exactlyOneBlankProbability(app.state.selections[c]) :
