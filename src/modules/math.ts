@@ -37,6 +37,11 @@ export const hypergeometricProbability = (N: number, n: number, K: number, k: nu
         return 0;
     }
 
+    // If drawing less cards than target cards, probability is 0
+    if (n < k) {
+        return 0;
+    }
+
     // If drawing all cards, probability is 1
     if (n === N && k === K) {
         return 1;

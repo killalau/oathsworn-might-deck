@@ -33,12 +33,28 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
     return p + deck[c].nextCardEV * app.state.selections[c];
   }, 0)
     .toFixed(1);
+  const deckColors = (Object.keys(app.state.selections) as Array<keyof MightCardsSelection>)
+  const p0 = app.state.isEncounter ? 0 : deckColors.reduce((prev: number, cur) => {
+    return prev * deck[cur].zeroBlanksProbability(app.state.selections[cur]);
+  }, 1);
+  const p1 = deckColors.reduce((prev: number, cur) => {
+    const p = deckColors.reduce((p: number, c) => {
+      return cur === c ?
+        p * deck[c].exactlyOneBlankProbability(app.state.selections[c]) :
+        p * deck[c].zeroBlanksProbability(app.state.selections[c]);
+    }, 1)
+    return prev + p;
+  }, 0);
+  const hitChance = (p0 + p1) * 100;
 
   return (
     <Grid container spacing={1}>
       <Grid item xs={12} container>
         <Grid item xs={6} sm={4}>
           <Typography>Damage (EV): {damageEV}</Typography>
+        </Grid>
+        <Grid item xs={6} sm={4}>
+          <Typography>Hit Chance: {hitChance.toFixed(0)}%</Typography>
         </Grid>
       </Grid>
       <Grid item xs={12} container>
