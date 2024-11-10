@@ -17,6 +17,7 @@ interface AppState {
   oathswornDeck: MightDeckOrganizer;
   selections: MightCardsSelection;
   drawResults: MightCard[][];
+  drawResultsSelections: { [i: number]: { [j: number]: boolean } };
 }
 
 interface AppActions {
@@ -24,8 +25,10 @@ interface AppActions {
   resetSelections: () => void;
   setSelections: (selections: MightCardsSelection) => void;
   confirmDraw: () => void;
-  discardDrawResults: () => void;
   confirmDrawCriticals: () => void;
+  toggleDrawResultSelection: (i: number, j: number) => void;
+  discardSelectedDrawResults: () => void;
+  discardAllDrawResults: () => void;
 }
 
 interface AppStateContextProps {
@@ -40,6 +43,7 @@ const createDefaultAppState = (): AppState => ({
   oathswornDeck: new MightDeckOrganizer(true),
   selections: { ...defaultMightCardsSelection },
   drawResults: [],
+  drawResultsSelections: {},
 });
 
 const AppStateContext = createContext<AppStateContextProps | undefined>(
@@ -64,6 +68,7 @@ export const AppStateProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setState((prev) => ({
         ...prev,
         selections: { ...defaultMightCardsSelection },
+        drawResultsSelections: {},
       })),
 
     setSelections: (selections: MightCardsSelection) =>
@@ -108,8 +113,28 @@ export const AppStateProvider: FC<{ children: ReactNode }> = ({ children }) => {
         }
       }),
 
-    discardDrawResults: () =>
-      setState((prev) => ({ ...prev, drawResults: [] })),
+    toggleDrawResultSelection: (i: number, j: number) =>
+      setState((prev) => {
+        const updates = { ...prev.drawResultsSelections };
+        updates[i] = { ...updates[i] } ?? {};
+        updates[i][j] = !updates[i][j];
+        return { ...prev, drawResultsSelections: updates };
+      }),
+
+    discardSelectedDrawResults: () =>
+      setState((prev) => ({
+        ...prev,
+        drawResults: [
+          [], // empty array to remove the "new" tag from the result rows
+          ...prev.drawResults.map(
+            (v, i) => v.filter((_, j) => !prev.drawResultsSelections[i]?.[j])
+          )
+        ],
+        drawResultsSelections: {},
+      })),
+
+    discardAllDrawResults: () =>
+      setState((prev) => ({ ...prev, drawResults: [], drawResultsSelections: {} })),
   };
 
   return (
