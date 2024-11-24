@@ -25,8 +25,8 @@ const CResultsBoard: FC<CResultsBoardProps> = ({ values }) => {
   const classes = useStyles();
   const damage = values.flat().reduce((p, c) => p + c.value, 0);
   const criticalHits = values.flat().filter((v) => v.critical).length;
-  const blanks = values.flat().filter((v) => !v.value).length;
-  const missed = !app.state.isEncounter && blanks >= 2;
+  const blanks = values?.[values?.length - 1]?.filter((v) => !v.value)?.length ?? 0;
+  const missed = !app.state.isEncounter && blanks >= 2; // Only oathsworn would miss and critial hits don't count
 
   const deck = app.state.isEncounter ? app.state.encounterDeck : app.state.oathswornDeck;
   const damageEV = (Object.keys(app.state.selections) as Array<keyof MightCardsSelection>).reduce((p: number, c) => {
